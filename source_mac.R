@@ -2,7 +2,7 @@ install.packages("devtools")
 library(devtools)
 
 # jdk install guide
-# http://recipes4dev.tistory.com/52
+# https://www.youtube.com/watch?v=v8xZWbIASc0
 
 install.packages("KoNLP")
 library(KoNLP)
