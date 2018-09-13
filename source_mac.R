@@ -44,6 +44,9 @@ library(RcppMeCab)
 test <- "한글 테스트 입니다."
 pos(test)
 
+tar <- "https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh"
+download.file(tar, destfile = "~/Miniconda3-latest-MacOSX-x86_64.sh")
+
 install_github('haven-jeon/KoSpacing')
 library(KoSpacing)
 spacing("김형호영화시장분석가는'1987'의네이버영화정보네티즌10점평에서언급된단어들을지난해12월27일부터올해1월10일까지통계프로그램R과KoNLP패키지로텍스트마이닝하여분석했다.")
