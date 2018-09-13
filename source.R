@@ -15,9 +15,10 @@ library(KoNLP)
 
 install.packages("tidytext")
 
-install_github("mrchypark/RcppMecabe")
+install_github("mrchypark/RcppMecab")
+library(RcppMeCab)
 installMecabKoForWindows()
-installMecabKoDicForWindlows()
+installMecabKoDicForWindows()
 
 test <- "한글 테스트 입니다."
 test <- iconv(test, to = "UTF-8")
