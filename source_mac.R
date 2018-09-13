@@ -10,8 +10,6 @@ library(KoNLP)
 test <- "한글 테스트 입니다."
 extractNoun(test)
 
-
-
 ###  https://bitbucket.org/eunjeon/mecab-ko-dic 참조
 
 tar <- "https://bitbucket.org/eunjeon/mecab-ko/downloads/mecab-0.996-ko-0.9.2.tar.gz"
@@ -46,6 +44,10 @@ pos(test)
 
 tar <- "https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh"
 download.file(tar, destfile = "~/Miniconda3-latest-MacOSX-x86_64.sh")
+
+## shell
+# cd ~/
+# bash Miniconda3-latest-MacOSX-x86_64.sh
 
 install_github('haven-jeon/KoSpacing')
 library(KoSpacing)
