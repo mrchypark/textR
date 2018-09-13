@@ -1,10 +1,16 @@
 install.packages("devtools")
 library(devtools)
 
+# jdk install guide
+# http://recipes4dev.tistory.com/52
+
 install.packages("KoNLP")
 library(KoNLP)
 
-install.packages("tidytext")
+test <- "한글 테스트 입니다."
+extractNoun(test)
+
+
 
 ###  https://bitbucket.org/eunjeon/mecab-ko-dic 참조
 
@@ -38,4 +44,12 @@ library(RcppMeCab)
 test <- "한글 테스트 입니다."
 pos(test)
 
-extractNoun(test)
+install_github('haven-jeon/KoSpacing')
+library(KoSpacing)
+spacing("김형호영화시장분석가는'1987'의네이버영화정보네티즌10점평에서언급된단어들을지난해12월27일부터올해1월10일까지통계프로그램R과KoNLP패키지로텍스트마이닝하여분석했다.")
+
+install.packages("tidytext")
+install_github("forkonlp/presidentSpeechKr")
+
+library(tidytext)
+library(presidentSpeechKr)
