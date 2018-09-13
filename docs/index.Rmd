@@ -24,14 +24,141 @@ knitr::opts_chunk$set(cache = T, fig.height = 5)
 
 class: center, middle, title-slide, inverse
 
-## Docker와 함께하는 R
+## 텍스트 분석을 위한 R 패키지 설치 가이드
 
-### <https://mrchypark.github.io/docker-with-r>
+### <https://mrchypark.github.io/textR>
 
-#### [[pdf버전]](https://github.com/mrchypark/docker-with-r/blob/master/docs/docker-with-r.pdf) [[문의하기]](http://pf.kakao.com/_RXANd) [[의견 및 오류 신고]](https://github.com/mrchypark/docker-with-r/issues/new)
-#### [스타누르기](https://github.com/mrchypark/docker-with-r)는 컨텐츠 제작자를 춤추게 합니다.
+#### [[pdf버전]](https://github.com/mrchypark/textR/blob/master/docs/textR.pdf) [[문의하기]](http://pf.kakao.com/_RXANd) [[의견 및 오류 신고]](https://github.com/mrchypark/textR/issues/new)
+#### [스타누르기](https://github.com/mrchypark/textR)는 컨텐츠 제작자를 춤추게 합니다.
 
 ### 박찬엽
 
-### 2017년 11월 28일
+### 2018년 09월 13일
 ---
+class: center, middle, title-slide, inverse
+
+## windows 10 사용자
+
+---
+class: inverse
+
+## 설치를 위한 패키지 설치
+
+아래 코드를 R 콘솔에서 실행하세요.
+
+```
+install.packages("devtools")
+library(devtools)
+install.packages("installr", type = "binary")
+library(installr)
+install.rtools()
+Sys.setenv(TAR = "C:/Rtools/bin/tar.exe")
+```
+---
+
+class: inverse
+
+## KoNLP 패키지 설치 및 테스트
+
+KoNLP는 가장 유명한 형태소 분석기입니다.
+
+```
+install_github("talgalili/installr")
+library(installr)
+
+install.java()
+install.packages("KoNLP")
+library(KoNLP)
+
+test <- "한글 테스트 입니다."
+extractNoun(test)
+```
+맨 마지막 코드로 아래 결과가 나와야 합니다.
+```
+[1] "한글"   "테스트"
+```
+---
+
+class: inverse
+
+## RcppMecab 패키지 설치 및 테스트
+
+RcppMecab은 빠른 형태소 분석기입니다.
+
+```
+install_github("mrchypark/RcppMecab")
+library(RcppMeCab)
+installMecabKoForWindows()
+installMecabKoDicForWindows()
+
+test <- "한글 테스트 입니다."
+pos(test)
+```
+
+아래 결과가 나와야 합니다.
+
+```
+$`한글 테스트 입니다.`
+[1] "한글/NNG"      "테스트/NNG"    "입니다/VCP+EF" "./SF"
+```
+
+글자가 깨진다면 아래 코드를 시도해 보세요.
+
+```
+test <- "한글 테스트 입니다."
+test <- iconv(test, to = "UTF-8")
+pos(test)
+```
+
+---
+class: inverse
+
+## KoSpacing 패키지 설치 및 테스트
+
+```
+library(devtools)
+library(installr)
+install.conda()
+install_github('haven-jeon/KoSpacing')
+library(KoSpacing)
+```
+KoSpacing 패키지를 불러오면 아래 텍스트가 나오면 성공입니다.
+```
+loaded KoSpacing model!
+```
+테스트 코드는 아래와 같습니다.
+```
+spacing("김형호영화시장분석가는'1987'의네이버영화정보네티즌10점평에서언급된단어들을지난해12월27일부터올해1월10일까지통계프로그램R과KoNLP패키지로텍스트마이닝하여분석했다.")
+```
+아래 결과가 나오면 성공입니다.
+```
+[1] "김형호 영화시장 분석가는 '1987'의 네이버 영화 정보 네티즌 10점 평에서 언급된 단어들을 지난해 12월 27일부터 올해 1월 10일까지 통계 프로그램 R과 KoNLP 패키지로 텍스트마이닝하여 분석했다."
+```
+
+---
+class: inverse
+
+## 추가 패키지 설치
+
+tidytext 패키지는 텍스트를 tidy하게 다룰 수 있게 해줍니다.    
+presidentSpeechKr 패키지는 역대 대통령 연설문 텍스트를 사용할 수 있게 해주는 패키지입니다.
+
+```
+install.packages("tidytext")
+install_github("forkonlp/presidentSpeechKr")
+
+library(tidytext)
+library(presidentSpeechKr)
+```
+
+위 패키지들을 패키지를 불러오는 것이 동작하는 것을 확인하시면 됩니다.
+
+---
+class: center, middle, title-slide, inverse
+
+## macOS 사용자
+
+---
+class: inverse
+
+## 설치를 위한 패키지 설치
