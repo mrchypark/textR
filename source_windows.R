@@ -20,7 +20,7 @@ installMecabKoForWindows()
 installMecabKoDicForWindlows()
 
 test <- "한글 테스트 입니다."
-test <- iconv(test, to = "UTF-8")
+# test <- iconv(test, to = "UTF-8")
 pos(test)
 
 extractNoun(test)
