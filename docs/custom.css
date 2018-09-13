@@ -1,0 +1,57 @@
+@import url('https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-kr.css');
+@import url('https://fonts.googleapis.com/earlyaccess/nanumbrushscript.css');
+@import url('https://fonts.googleapis.com/earlyaccess/nanumpenscript.css');
+
+html, body, h1, h2, h3, h4, h5, h6, li, p {font-family:'Spoqa Han Sans';}
+
+.pen-b { 
+  font-family: 'Nanum Brush Script', cursive;
+  font-size: 130%;
+}
+
+.pen-p { 
+  font-family: 'Nanum Pen Script', cursive;
+  font-size: 130%;
+}
+
+.blue {
+  color: #3b5998;
+}
+
+.yellow {
+  color: #FFCB01;
+}
+
+.gray {
+  color: #7f7f7f;
+}
+
+.large { font-size: 130% }
+.small { font-size: 70%  }
+.tiny  { font-size: 40%  }
+
+/* The Magic Float Center Code */
+.pull-center {
+  float: right;
+
+  position: relative;
+  right: 50%; /* or right 50% */
+  text-align: left;
+  width: 60%
+}
+.pull-center > .set {
+  position: relative;
+  left: 50%;
+}
+
+.pull-center > .ori {
+  position: relative;
+  left: 50%;
+  width: 134%
+}
+
+.pull-center > .half {
+  position: relative;
+  left: 50%;
+  width: 118%
+}

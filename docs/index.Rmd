@@ -1,0 +1,37 @@
+---
+title: "[R]Docker와 함께하는 R"
+author: "박찬엽"
+date: "2017년 11월 28일"
+output:
+  xaringan::moon_reader:
+    seal: false
+    css: ["default", "custom.css"]
+    lib_dir: libs
+    includes:
+      in_header: google_analytics.html
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      navigateion: {click: true}
+      countIncrementalSlides: false
+      ratio: '16:9'
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(cache = T, fig.height = 5)
+```
+
+class: center, middle, title-slide, inverse
+
+## Docker와 함께하는 R
+
+### <https://mrchypark.github.io/docker-with-r>
+
+#### [[pdf버전]](https://github.com/mrchypark/docker-with-r/blob/master/docs/docker-with-r.pdf) [[문의하기]](http://pf.kakao.com/_RXANd) [[의견 및 오류 신고]](https://github.com/mrchypark/docker-with-r/issues/new)
+#### [스타누르기](https://github.com/mrchypark/docker-with-r)는 컨텐츠 제작자를 춤추게 합니다.
+
+### 박찬엽
+
+### 2017년 11월 28일
+---
