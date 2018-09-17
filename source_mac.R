@@ -2,15 +2,13 @@ install.packages("devtools")
 library(devtools)
 
 # jdk install guide
-# http://recipes4dev.tistory.com/52
+# https://www.youtube.com/watch?v=v8xZWbIASc0
 
 install.packages("KoNLP")
 library(KoNLP)
 
 test <- "한글 테스트 입니다."
 extractNoun(test)
-
-
 
 ###  https://bitbucket.org/eunjeon/mecab-ko-dic 참조
 
@@ -46,6 +44,10 @@ pos(test)
 
 tar <- "https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh"
 download.file(tar, destfile = "~/Miniconda3-latest-MacOSX-x86_64.sh")
+
+## shell
+# cd ~/
+# bash Miniconda3-latest-MacOSX-x86_64.sh
 
 install_github('haven-jeon/KoSpacing')
 library(KoSpacing)
