@@ -207,8 +207,7 @@ class: inverse
 ## tidy .yellow[text] data 란
 
 * a table with one-token-per-row    
-* 한 행(row)에 한 토큰(token)으로 구성된 테이블
-
+* 한 행(row)에 한 토큰(token)으로 테이블을 구성해야 한다.
 
 --
 
@@ -217,6 +216,138 @@ class: inverse
 글자 중 의미를 가진 단위를 총칭.    
 tokenization은 가지고 있는 텍스트 자원을 token 단위로 나누는 것을 뜻함.     
 ex> 자소(자음, 모음), 음소(글자), 형태소, 단어, n-gram 등
+
+---
+class: inverse
+
+## tidytext 패키지 소개
+
+.pull-left[
+* 한 행(row)에 한 토큰(token)으로 테이블을 구성하기 위한 패키지    
+* 여러 가지 token과 tm 패키지와의 호환 기능을 제공
+* 자세히 소개하는 [온라인 사이트(영문)][tidytextmining]
+
+  ```{r}
+  if(!requireNamespace("tidytext")){
+    install.packages("tidytext")
+  }
+  library(tidytext)
+  ```
+
+]
+.pull-right[
+  .center[
+    [<img src=https://www.tidytextmining.com/images/cover.png width=60%>](http://amzn.to/2tZkmxG)
+  ]
+]
+
+---
+class: inverse
+
+## 데이터 패키지 소개
+
+### [presidentSpeechKr](https://forkonlp.github.io/presidentSpeechKr/)
+
+대통령 기록 연구실의 대통령 연설문을 제공
+
+```{r}
+if(!requireNamespace("presidentSpeechKr")){
+  remotes::install_github("presidentSpeechKr")
+}
+library(presidentSpeechKr)
+```
+
+---
+class: inverse
+
+## 대통령 조건 확인
+```{r}
+get_president()
+```
+---
+class: inverse
+
+## 연설 분야 조건 확인
+```{r}
+get_field()
+```
+---
+class: inverse
+
+## 연설 유형 확인
+```{r}
+get_event()
+
+```
+
+---
+class: inverse
+
+## 조건에 맞는 연설 검색
+
+```{r}
+search_speech(count=3)
+```
+
+---
+class: inverse
+
+## 연설 텍스트 가져오기
+```{r}
+library(dplyr)
+tar <- 
+  search_speech(count=3) %>% 
+  select(link) %>% 
+  top_n(1)
+get_speech(tar)
+```
+
+---
+class: center, middle, title-slide, inverse
+
+## 단어 단위로 잘라보자!
+
+---
+class: inverse
+
+## `unnest_tokens()` 함수
+
+기본값인 단어 단위(특수문자 제거, 띄어쓰기 기준) token으로 동작.
+
+```{r}
+get_speech(tar) %>% 
+  select(president, content) %>% 
+  unnest_tokens(word, content)
+```
+
+---
+class: inverse
+
+## `unnest_tokens()` 함수 설명
+
+텍스트 데이터를 token 단위로 풀어내는 함수
+
+```{}
+unnest_tokens(
+  tbl = 텍스트 데이터,      # 다루고자 하는 텍스트 데이터 객체
+  output = 결과열의 이름,   # token화의 결과가 작성될 열의 이름
+  input = 목표 텍스트 열,   # 텍스트 데이터 객체 내의 텍스트 열
+  token = "word",         # 기본값이 있어 생략 가능
+  ...                     # 기타 옵션들
+  )
+```
+
+---
+class: inverse
+
+```{r}
+# 연설문 중 1개를 가져와서
+get_speech(tar) %>%
+  # 대통령 컬럼과 연설문 컬럼만 선택한 후
+  select(president, content) %>% 
+  # 연설문 컬럼을 word 단위로 쪼갠 결과물을 word라는 컬럼으로 출력
+  unnest_tokens(word, content)
+```
 
 ---
 class: inverse
@@ -304,3 +435,4 @@ class: inverse
 
 [1]: https://github.com/tidyverse/tidyverse
 [2]: https://mrchypark.github.io/kisa_finR
+[tidytextmining]: https://www.tidytextmining.com/

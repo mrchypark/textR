@@ -266,8 +266,7 @@ class: inverse
 ## tidy .yellow[text] data 란
 
 * a table with one-token-per-row    
-* 한 행(row)에 한 토큰(token)으로 구성된 테이블
-
+* 한 행(row)에 한 토큰(token)으로 테이블을 구성해야 한다.
 
 --
 
@@ -276,6 +275,219 @@ class: inverse
 글자 중 의미를 가진 단위를 총칭.    
 tokenization은 가지고 있는 텍스트 자원을 token 단위로 나누는 것을 뜻함.     
 ex&gt; 자소(자음, 모음), 음소(글자), 형태소, 단어, n-gram 등
+
+---
+class: inverse
+
+## tidytext 패키지 소개
+
+.pull-left[
+* 한 행(row)에 한 토큰(token)으로 테이블을 구성하기 위한 패키지    
+* 여러 가지 token과 tm 패키지와의 호환 기능을 제공
+* 자세히 소개하는 [온라인 사이트(영문)][tidytextmining]
+
+  
+  ```r
+  if(!requireNamespace("tidytext")){
+    install.packages("tidytext")
+  }
+  library(tidytext)
+  ```
+
+]
+.pull-right[
+  .center[
+    [&lt;img src=https://www.tidytextmining.com/images/cover.png width=60%&gt;](http://amzn.to/2tZkmxG)
+  ]
+]
+
+---
+class: inverse
+
+## 데이터 패키지 소개
+
+### [presidentSpeechKr](https://forkonlp.github.io/presidentSpeechKr/)
+
+대통령 기록 연구실의 대통령 연설문을 제공
+
+
+```r
+if(!requireNamespace("presidentSpeechKr")){
+  remotes::install_github("presidentSpeechKr")
+}
+library(presidentSpeechKr)
+```
+
+---
+class: inverse
+
+## 대통령 조건 확인
+
+```r
+get_president()
+```
+
+```
+##  [1] "이승만" "윤보선" "박정희" "최규하" "전두환" "노태우" "김영삼"
+##  [8] "김대중" "노무현" "이명박"
+```
+---
+class: inverse
+
+## 연설 분야 조건 확인
+
+```r
+get_field()
+```
+
+```
+##  [1] "국정전반"       "정치/사회"      "산업/경제"      "외교/통상"     
+##  [5] "국방"           "과학기술정보"   "교육"           "문화/체육/관광"
+##  [9] "환경"           "기타"
+```
+---
+class: inverse
+
+## 연설 유형 확인
+
+```r
+get_event()
+```
+
+```
+##  [1] "취임사"      "신년사"      "국회연설"    "기념사"      "만찬사"     
+##  [6] "환영사"      "치사"        "성명/담화문" "라디오연설"  "기타"
+```
+
+---
+class: inverse
+
+## 조건에 맞는 연설 검색
+
+
+```r
+search_speech(count=3)
+```
+
+```
+## # A tibble: 3 x 6
+##   president field  event   title              date   link                 
+##   &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;              &lt;chr&gt;  &lt;chr&gt;                
+## 1 이승만    기타   성명/담화문~ 학생제군에게       1948   http://www.pa.go.kr/~
+## 2 이승만    국정전반~ 취임사  "대통령 취임사(大統領就任辭) ~ 1948.~ http://www.pa.go.kr/~
+## 3 이승만    정치/사회~ 성명/담화문~ "민족이 원하는 길을 따를 결심~ 1948.~ http://www.pa.go.kr/~
+```
+
+---
+class: inverse
+
+## 연설 텍스트 가져오기
+
+```r
+library(dplyr)
+tar &lt;- 
+  search_speech(count=3) %&gt;% 
+  select(link) %&gt;% 
+  top_n(1)
+```
+
+```
+## Selecting by link
+```
+
+```r
+get_speech(tar)
+```
+
+```
+## # A tibble: 1 x 9
+##   title  date  president place field event  source   paragraph content    
+##   &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;        &lt;int&gt; &lt;chr&gt;      
+## 1 학생제군에~ 1948  이승만    국내  기타  성명/담화~ 金珖燮 편, ~         1 우리 대한 전국 학~
+```
+
+---
+class: center, middle, title-slide, inverse
+
+## 단어 단위로 잘라보자!
+
+---
+class: inverse
+
+## `unnest_tokens()` 함수
+
+기본값인 단어 단위(특수문자 제거, 띄어쓰기 기준) token으로 동작.
+
+
+```r
+get_speech(tar) %&gt;% 
+  select(president, content) %&gt;% 
+  unnest_tokens(word, content)
+```
+
+```
+## # A tibble: 411 x 2
+##    president word      
+##    &lt;chr&gt;     &lt;chr&gt;     
+##  1 이승만    우리      
+##  2 이승만    대한      
+##  3 이승만    전국      
+##  4 이승만    학생      
+##  5 이승만    제군      
+##  6 이승만    내가      
+##  7 이승만    지금      
+##  8 이승만    간단이    
+##  9 이승만    학생들에게
+## 10 이승만    몇        
+## # ... with 401 more rows
+```
+
+---
+class: inverse
+
+## `unnest_tokens()` 함수 설명
+
+텍스트 데이터를 token 단위로 풀어내는 함수
+
+```{}
+unnest_tokens(
+  tbl = 텍스트 데이터,      # 다루고자 하는 텍스트 데이터 객체
+  output = 결과열의 이름,   # token화의 결과가 작성될 열의 이름
+  input = 목표 텍스트 열,   # 텍스트 데이터 객체 내의 텍스트 열
+  token = "word",         # 기본값이 있어 생략 가능
+  ...                     # 기타 옵션들
+  )
+```
+
+---
+class: inverse
+
+
+```r
+# 연설문 중 1개를 가져와서
+get_speech(tar) %&gt;%
+  # 대통령 컬럼과 연설문 컬럼만 선택한 후
+  select(president, content) %&gt;% 
+  # 연설문 컬럼을 word 단위로 쪼갠 결과물을 word라는 컬럼으로 출력
+  unnest_tokens(word, content)
+```
+
+```
+## # A tibble: 411 x 2
+##    president word      
+##    &lt;chr&gt;     &lt;chr&gt;     
+##  1 이승만    우리      
+##  2 이승만    대한      
+##  3 이승만    전국      
+##  4 이승만    학생      
+##  5 이승만    제군      
+##  6 이승만    내가      
+##  7 이승만    지금      
+##  8 이승만    간단이    
+##  9 이승만    학생들에게
+## 10 이승만    몇        
+## # ... with 401 more rows
+```
 
 ---
 class: inverse
@@ -373,6 +585,7 @@ class: inverse
 
 [1]: https://github.com/tidyverse/tidyverse
 [2]: https://mrchypark.github.io/kisa_finR
+[tidytextmining]: https://www.tidytextmining.com/
     </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({

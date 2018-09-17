@@ -21,7 +21,7 @@
 
 
 
-class: center, middle, title-slide, inverse
+class: center, middle, title-slide, 
 
 ## 텍스트 분석을 위한 R 패키지 설치 가이드
 
@@ -34,46 +34,57 @@ class: center, middle, title-slide, inverse
 
 ### 2018년 09월 13일
 ---
-class: center, middle, title-slide, inverse
+class: center, middle, title-slide, 
 
 ## windows 10 사용자
 
 ---
-class: inverse
+class: 
 
 ## 설치를 위한 패키지 설치
 
 아래 코드를 R 콘솔에서 실행하세요.
 
 ```{}
+# install_github 기능을 제공하는 remotes 패키지를 설치합니다.
 install.packages("remotes")
 library(remotes)
+# stringi 패키지를 설치합니다.
+# rtools 문제로 미리 컴파일된 버전을 설치합니다.
 install.packages(
     "https://github.com/gagolews/stringi/raw/master/devel/winbuilder/3.5/stringi_1.2.4.zip",
     repos = NULL,
 )
+# 여러 프로그램의 설치를 지원하는 installr 패키지를 설치합니다.
 install.packages("installr")
 library(installr)
 
 # 설치 화면이 나오는데, 다른 설정 변경 없이 `다음` 클릭하며 설치해주세요.
 install.rtools()
+# 환경 변수를 등록합니다.
 Sys.setenv(PATH = paste(Sys.getenv("PATH"), "C:/Rtools/mingw_64/bin/", sep = ";"))
 Sys.setenv(BINPREF = "C:/Rtools/mingw_64/bin/")
 Sys.setenv(TAR = "C:/Rtools/bin/tar.exe")
 ```
 ---
 
-class: inverse
+class: 
 
 ## KoNLP 패키지 설치 및 테스트
 
 KoNLP는 가장 유명한 형태소 분석기입니다.
 
 ```{}
+# java 인스톨을 지원하는 버전을 설치합니다.
 install_github("talgalili/installr")
+
+## 설치 이후에 Ctrl + Shift + F10 을 눌러 R session을 재시작해 주세요.
+
 library(installr)
 
+# 자바를 설치합니다.
 install.java()
+# KoNLP 패키지를 설치합니다.
 install.packages("KoNLP")
 library(KoNLP)
 
@@ -86,7 +97,7 @@ extractNoun(test)
 ```
 
 ---
-class: inverse
+class: 
 
 ## KoSpacing 패키지 설치 및 테스트
 
@@ -98,8 +109,9 @@ library(installr)
 
 # 설치 화면이 나오는데, 다른 설정 변경 없이 `다음` 클릭하며 설치해주세요.
 install.conda()
-install_github('haven-jeon/KoSpacing')
+install_github('mrchypark/KoSpacing')
 library(KoSpacing)
+set_env()
 spacing("김형호영화시장분석가는'1987'의네이버영화정보네티즌10점평에서언급된단어들을지난해12월27일부터올해1월10일까지통계프로그램R과KoNLP패키지로텍스트마이닝하여분석했다.")
 ```
 
@@ -110,19 +122,32 @@ spacing("김형호영화시장분석가는'1987'의네이버영화정보네티�
 
 ---
 
-class: inverse
+class: 
 
 ## RcppMecab 패키지 설치 및 테스트
 
 RcppMecab은 빠른 형태소 분석기입니다.
 
+.pull-left[
 ```{}
 library(remotes)
+# 설치에 필요한 환경 변수를 등록합니다.
+Sys.setenv(
+  PATH = paste(Sys.getenv("PATH"),
+    "C:/Rtools/mingw_32/bin",
+    "C:/Rtools/mingw_64/bin",
+    sep = ";")
+  )
 install_github("mrchypark/RcppMecab")
 library(RcppMeCab)
+# mecab의 윈도우 버전을 설치합니다.
 installMecabKoForWindows()
+# mecab 사전의 윈도우 버전을 설치합니다.
 installMecabKoDicForWindows()
-
+```
+]
+.pull-right[
+```{}
 test &lt;- "한글 테스트 입니다."
 pos(test)
 ```
@@ -138,12 +163,13 @@ $`한글 테스트 입니다.`
 
 ```{}
 test &lt;- "한글 테스트 입니다."
+# iconv 함수는 인코딩을 변경하는 함수입니다.
 test &lt;- iconv(test, to = "UTF-8")
 pos(test)
 ```
-
+]
 ---
-class: inverse
+class: 
 
 ## 추가 패키지 설치
 
@@ -161,12 +187,12 @@ library(presidentSpeechKr)
 위 패키지들는 패키지를 불러오는 것이 동작하는 것을 확인해주세요.
 
 ---
-class: center, middle, title-slide, inverse
+class: center, middle, title-slide, 
 
 ## macOS 사용자
 
 ---
-class: inverse
+class: 
 
 ## 터미널에서 설치해야 하는 도구들
 
@@ -183,7 +209,7 @@ java -version
 버전이 1.8.XXXXX 로 표시되면 잘 설치된 것입니다.
 
 ---
-class: inverse
+class: 
 
 ## 터미널에서 설치해야 하는 도구들
 
@@ -198,7 +224,7 @@ bash Miniconda3-latest-MacOSX-x86_64.sh
 ```
 
 ---
-class: inverse
+class: 
 
 ## 터미널에서 설치해야 하는 도구들
 
@@ -221,7 +247,7 @@ make check
 sudo make install
 ```
 ---
-class: inverse
+class: 
 
 ## 터미널에서 설치해야 하는 도구들
 
@@ -245,7 +271,7 @@ sudo make install
 ```
 
 ---
-class: inverse
+class: 
 
 ## KoNLP 패키지 설치 및 테스트
 
@@ -265,16 +291,18 @@ extractNoun(test)
 ```
 
 ---
-class: inverse
+class: 
 
 ## KoSpacing 패키지 설치 및 테스트
 
 KoSpacing 패키지는 자동 띄어쓰기 기능을 제공합니다.
 
 ```{}
-library(devtools)
-install_github('haven-jeon/KoSpacing')
+install.packages("remotes")
+library(remotes)
+install_github('mrchypark/KoSpacing')
 library(KoSpacing)
+set_env()
 spacing("김형호영화시장분석가는'1987'의네이버영화정보네티즌10점평에서언급된단어들을지난해12월27일부터올해1월10일까지통계프로그램R과KoNLP패키지로텍스트마이닝하여분석했다.")
 ```
 
@@ -284,14 +312,14 @@ spacing("김형호영화시장분석가는'1987'의네이버영화정보네티�
 ```
 
 ---
-class: inverse
+class: 
 
 ## RcppMecab 패키지 설치 및 테스트
 
 RcppMecab은 빠른 형태소 분석기입니다.
 
 ```{}
-library(devtools)
+library(remotes)
 install_github("junhewk/RcppMeCab")
 library(RcppMeCab)
 
@@ -307,7 +335,7 @@ $`한글 테스트 입니다.`
 ```
 
 ---
-class: inverse
+class: 
 
 ## 추가 패키지 설치
 
@@ -325,7 +353,7 @@ library(presidentSpeechKr)
 위 패키지들는 패키지를 불러오는 것이 동작하는 것을 확인해주세요.
 
 ---
-class: inverse
+class: 
 
 ### 과제
 
