@@ -346,5 +346,3 @@ pos(test)
 test <- spacing(test)
 extractNoun(test)
 ```
-
----
