@@ -21,7 +21,7 @@
 
 
 
-class: center, middle, title-slide, inverse
+class: center, middle, title-slide, 
 
 ## 텍스트 분석을 위한 R 
 
@@ -32,9 +32,9 @@ class: center, middle, title-slide, inverse
 
 ### 박찬엽
 
-### 2018년 09월 13일
+### 2018년 09월 18일
 ---
-class: center, middle, title-slide, inverse
+class: center, middle, title-slide, 
 
 ## 텍스트 관련 R 패키지 설치 가이드
 
@@ -45,15 +45,16 @@ class: center, middle, title-slide, inverse
 .footnote[\* R 3.5.1 을 기준으로 작성하였습니다.]
 
 ---
-class: center, middle, title-slide, inverse
+class: center, middle, title-slide, 
 
+## 사전 지식 1
 ## 함수를 연결하는 파이프 연산자(%&gt;%)
 
 ![](https://raw.githubusercontent.com/mrchypark/dabrp_classnote3/master/docs/img/pipes.png)
 
 ---
 
-class: inverse
+class: 
 ## 파이프 연산자(%&gt;%)
 
 함수를 중첩해서 사용할 일이 점점 빈번해 짐
@@ -63,7 +64,7 @@ plot(diff(log(sample(rnorm(10000,mean=10,sd=1),size=100,replace=FALSE))),col="re
 ```
 
 --
-class: inverse
+class: 
 ### %&gt;%를 사용하면 
 
 .pull-left[
@@ -82,7 +83,7 @@ rnorm(10000,mean=10,sd=1) %&gt;%
 ```
 ]
 ---
-class: inverse
+class: 
 
 ## 파이프 연산자(%&gt;%)
 
@@ -113,7 +114,7 @@ flights %&gt;%
 ## # ... with 355 more rows
 ```
 ---
-class: inverse
+class: 
 ## 파이프 연산자(%&gt;%)
 
 group_by()는 filter()와도 함께 사용할 수 있음
@@ -148,7 +149,7 @@ popular_dests
 ```
 
 ---
-class: inverse
+class: 
 ## 파이프 연산자(%&gt;%)
 
 사용할 데이터부터 순서대로 함수를 작성할 수 있는 장점
@@ -181,14 +182,15 @@ popular_dests %&gt;%
 
 ---
 
-class: center, middle, title-slide, inverse
+class: center, middle, title-slide, 
 
+## 사전 지식 2
 # tidy data + universe 
 
 [![](https://github.com/tidyverse/tidyverse/raw/master/man/figures/logo.png)][1]
 
 ---
-class: inverse
+class: 
 ## [tidyverse][1] 패키지는
 
 .pull-left[
@@ -209,7 +211,7 @@ library(tidyverse)
 ```
 ]
 ---
-class: inverse
+class: 
 ## tidy data 란
 
 1. [Hadley Wickham](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html)  2. [고감자님의 블로그](http://freesearch.pe.kr/archives/3942)  3. [헬로우데이터과학](http://www.hellodatascience.com/?p=287)
@@ -231,7 +233,7 @@ class: inverse
   \* 출처 : [금융데이터 분석을 위한 R 입문][2]
 ]
 ---
-class: inverse
+class: 
 ## tidy data 란
 
 ![](http://garrettgman.github.io/images/tidy-1.png)
@@ -241,7 +243,7 @@ class: inverse
 ]
 
 ---
-class: inverse
+class: 
 ## long form vs wide form
 
 .pull-left[
@@ -261,9 +263,9 @@ class: inverse
 
 ---
 
-class: inverse
+class: 
 
-## tidy .yellow[text] data 란
+## tidy .blue[text] data 란
 
 * a table with one-token-per-row    
 * 한 행(row)에 한 토큰(token)으로 테이블을 구성해야 한다.
@@ -277,12 +279,13 @@ tokenization은 가지고 있는 텍스트 자원을 token 단위로 나누는 �
 ex&gt; 자소(자음, 모음), 음소(글자), 형태소, 단어, n-gram 등
 
 ---
-class: inverse
+class: 
 
-## tidytext 패키지 소개
+## [tidytext][tidytext] 패키지 소개
 
 .pull-left[
 * 한 행(row)에 한 토큰(token)으로 테이블을 구성하기 위한 패키지    
+* 파이프 연산자를 지원    
 * 여러 가지 token과 tm 패키지와의 호환 기능을 제공
 * 자세히 소개하는 [온라인 사이트(영문)][tidytextmining]
 
@@ -302,7 +305,7 @@ class: inverse
 ]
 
 ---
-class: inverse
+class: 
 
 ## 데이터 패키지 소개
 
@@ -319,7 +322,7 @@ library(presidentSpeechKr)
 ```
 
 ---
-class: inverse
+class: 
 
 ## 대통령 조건 확인
 
@@ -331,8 +334,8 @@ get_president()
 ##  [1] "이승만" "윤보선" "박정희" "최규하" "전두환" "노태우" "김영삼"
 ##  [8] "김대중" "노무현" "이명박"
 ```
----
-class: inverse
+--
+class: 
 
 ## 연설 분야 조건 확인
 
@@ -346,7 +349,7 @@ get_field()
 ##  [9] "환경"           "기타"
 ```
 ---
-class: inverse
+class: 
 
 ## 연설 유형 확인
 
@@ -359,34 +362,56 @@ get_event()
 ##  [6] "환영사"      "치사"        "성명/담화문" "라디오연설"  "기타"
 ```
 
----
-class: inverse
+--
+class: 
 
-## 조건에 맞는 연설 검색
+## 연설 리스트 데이터
 
 
 ```r
-search_speech(count=3)
+data(spidx)
+str(spidx)
+```
+
+```
+## Classes 'tbl_df', 'tbl' and 'data.frame':	6681 obs. of  6 variables:
+##  $ president: chr  "이승만" "이승만" "이승만" "이승만" ...
+##  $ field    : chr  "기타" "국정전반" "정치/사회" "국정전반" ...
+##  $ event    : chr  "성명/담화문" "취임사" "성명/담화문" "기타" ...
+##  $ title    : chr  "학생제군에게" "대통령 취임사(大統領就任辭) " "민족이 원하는 길을 따를 결심, 국무총리 인준 부결에 대하여 " "미급점(未及點) 육성하라 " ...
+##  $ date     : chr  "1948" "1948.07.24" "1948.07.29" "1948.08.09" ...
+##  $ link     : chr  "http://www.pa.go.kr/research/contents/speech/index.jsp?spMode=view&amp;catid=c_pa02062&amp;artid=1310475" "http://www.pa.go.kr/research/contents/speech/index.jsp?spMode=view&amp;catid=c_pa02062&amp;artid=1310440" "http://www.pa.go.kr/research/contents/speech/index.jsp?spMode=view&amp;catid=c_pa02062&amp;artid=1310441" "http://www.pa.go.kr/research/contents/speech/index.jsp?spMode=view&amp;catid=c_pa02062&amp;artid=1310442" ...
+```
+
+---
+
+## 대통령 조건 연설 검색
+
+
+```r
+library(dplyr)
+spidx %&gt;% 
+  filter(president == "윤보선")
 ```
 
 ```
 ## # A tibble: 3 x 6
-##   president field  event   title              date   link                 
-##   &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;              &lt;chr&gt;  &lt;chr&gt;                
-## 1 이승만    기타   성명/담화문~ 학생제군에게       1948   http://www.pa.go.kr/~
-## 2 이승만    국정전반~ 취임사  "대통령 취임사(大統領就任辭) ~ 1948.~ http://www.pa.go.kr/~
-## 3 이승만    정치/사회~ 성명/담화문~ "민족이 원하는 길을 따를 결심~ 1948.~ http://www.pa.go.kr/~
+##   president field  event  title            date   link                    
+##   &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;            &lt;chr&gt;  &lt;chr&gt;                   
+## 1 윤보선    국정전반~ 취임사 제2대 윤보선 대통령 취임사~ 1960.~ http://www.pa.go.kr/res~
+## 2 윤보선    기타   기타   "윤보선 대통령 부산연설 \~ 1960.~ http://www.pa.go.kr/res~
+## 3 윤보선    기타   기타   "윤보선 대통령 대구연설 \~ 1960.~ http://www.pa.go.kr/res~
 ```
 
 ---
-class: inverse
+class: 
 
-## 연설 텍스트 가져오기
+## 연설문 텍스트 가져오기
 
 ```r
-library(dplyr)
 tar &lt;- 
-  search_speech(count=3) %&gt;% 
+  spidx %&gt;% 
+  filter(president == "윤보선") %&gt;% 
   select(link) %&gt;% 
   top_n(1)
 ```
@@ -401,18 +426,28 @@ get_speech(tar)
 
 ```
 ## # A tibble: 1 x 9
-##   title  date  president place field event  source   paragraph content    
-##   &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;        &lt;int&gt; &lt;chr&gt;      
-## 1 학생제군에~ 1948  이승만    국내  기타  성명/담화~ 金珖燮 편, ~         1 우리 대한 전국 학~
+##   title    date   president place field event source paragraph content    
+##   &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;      
+## 1 "윤보선 대통~ 1960.~ 윤보선    지역  기타  기타  ""             1 "영남지방의 한해 ~
 ```
 
 ---
-class: center, middle, title-slide, inverse
+
+## 연습문제
+
+1. presidentSpeechKr 패키지에서 검색할 수 있는 대통령은 총 몇명인가요?
+
+1. **윤보선** 대통령과 **박정희** 대통령은 각각 몇 개의 연설문이 있나요?
+
+1. `nchar()` 함수는 글자수를 세주는 함수입니다. **최규하** 대통령의 취임사는 총 몇 글자 인가요?
+
+---
+class: center, middle, title-slide, 
 
 ## 단어 단위로 잘라보자!
 
 ---
-class: inverse
+class: 
 
 ## `unnest_tokens()` 함수
 
@@ -426,24 +461,24 @@ get_speech(tar) %&gt;%
 ```
 
 ```
-## # A tibble: 411 x 2
-##    president word      
-##    &lt;chr&gt;     &lt;chr&gt;     
-##  1 이승만    우리      
-##  2 이승만    대한      
-##  3 이승만    전국      
-##  4 이승만    학생      
-##  5 이승만    제군      
-##  6 이승만    내가      
-##  7 이승만    지금      
-##  8 이승만    간단이    
-##  9 이승만    학생들에게
-## 10 이승만    몇        
-## # ... with 401 more rows
+## # A tibble: 100 x 2
+##    president word        
+##    &lt;chr&gt;     &lt;chr&gt;       
+##  1 윤보선    영남지방의  
+##  2 윤보선    한해        
+##  3 윤보선    상황을      
+##  4 윤보선    시찰차      
+##  5 윤보선    십오일      
+##  6 윤보선    상오        
+##  7 윤보선    구시        
+##  8 윤보선    삼십분      
+##  9 윤보선    특별기편으로
+## 10 윤보선    대구에      
+## # ... with 90 more rows
 ```
 
 ---
-class: inverse
+class: 
 
 ## `unnest_tokens()` 함수 설명
 
@@ -454,13 +489,13 @@ unnest_tokens(
   tbl = 텍스트 데이터,      # 다루고자 하는 텍스트 데이터 객체
   output = 결과열의 이름,   # token화의 결과가 작성될 열의 이름
   input = 목표 텍스트 열,   # 텍스트 데이터 객체 내의 텍스트 열
-  token = "word",         # 기본값이 있어 생략 가능
+  token = "word",         # 기본값(띄어쓰기 단위)이 있어 생략 가능
   ...                     # 기타 옵션들
   )
 ```
 
 ---
-class: inverse
+class: 
 
 
 ```r
@@ -473,26 +508,38 @@ get_speech(tar) %&gt;%
 ```
 
 ```
-## # A tibble: 411 x 2
-##    president word      
-##    &lt;chr&gt;     &lt;chr&gt;     
-##  1 이승만    우리      
-##  2 이승만    대한      
-##  3 이승만    전국      
-##  4 이승만    학생      
-##  5 이승만    제군      
-##  6 이승만    내가      
-##  7 이승만    지금      
-##  8 이승만    간단이    
-##  9 이승만    학생들에게
-## 10 이승만    몇        
-## # ... with 401 more rows
+## # A tibble: 100 x 2
+##    president word        
+##    &lt;chr&gt;     &lt;chr&gt;       
+##  1 윤보선    영남지방의  
+##  2 윤보선    한해        
+##  3 윤보선    상황을      
+##  4 윤보선    시찰차      
+##  5 윤보선    십오일      
+##  6 윤보선    상오        
+##  7 윤보선    구시        
+##  8 윤보선    삼십분      
+##  9 윤보선    특별기편으로
+## 10 윤보선    대구에      
+## # ... with 90 more rows
 ```
 
 ---
-class: inverse
 
-## 한글만의 특징 .yellow[형태소]
+## 띄어쓰기 단위로 나눴을 때 문제점
+
+.pull-left[
+  .blue[**하다**]가 몇 가지 단어가 되는지
+]
+
+.pull-right[
+  &lt;img src=https://cdn.namuwikiusercontent.com/s/47f895cbea4e349bc92bb773809d35f63f6ffa3de4c9e7c9bbfbdb8d7ab07cdd874510f6d749e9b96c4b5123478a9a77a1360c2d26b94dd85fbff6fe7f35f87d2153242b74e6512d9283fac5bdfe0cae?e=1544521711&amp;k=ApwZvLBifj767cef4_rIhA width=60%&gt;
+]
+
+---
+class: 
+
+## 한글의 특징 .yellow[형태소]
 
 형태소란 : 의미를 가지는 최소 단위
 
@@ -514,7 +561,7 @@ class: inverse
 ```
 
 ---
-class: inverse
+class: 
 
 .pull-left[![](https://github.com/haven-jeon/KoNLP/blob/master/etcs/figures/konlp_tags.png?raw=true)]
 .pull-right[
@@ -523,7 +570,7 @@ class: inverse
 ]
 
 ---
-class: inverse
+class: 
 
 ## R의 대표적인 형태소 분석기
 
@@ -545,12 +592,12 @@ class: inverse
 ]
 
 ---
-class: center, middle, title-slide, inverse
+class: center, middle, title-slide, 
 
 ## RcppMeCab 설치 확인
 
 ---
-class: inverse
+class: 
 
 ## RcppMeCab 실행
 
@@ -569,23 +616,171 @@ class: inverse
 ```
 
 ---
-class: center, middle, title-slide, inverse
+class: center, middle, title-slide, 
 
 ## KoNLP 설치 확인
 
 ---
-class: inverse
+class: 
 
 ## KoNLP 실행
 
+
+```r
+library(KoNLP)
+SimplePos09("롯데마트가 판매하고 있는 흑마늘 양념 치킨이 논란이 되고 있다.")
+```
+
+```
+## $롯데마트가
+## [1] "롯데마트가/N"
+## 
+## $판매하고
+## [1] "판매/N+하고/J"
+## 
+## $있는
+## [1] "있/P+는/E"
+## 
+## $흑마늘
+## [1] "흑마늘/N"
+## 
+## $양념
+## [1] "양념/N"
+## 
+## $치킨이
+## [1] "치킨/N+이/J"
+## 
+## $논란이
+## [1] "논란/N+이/J"
+## 
+## $되고
+## [1] "되/P+고/E"
+## 
+## $있다
+## [1] "있/P+다/E"
+## 
+## $.
+## [1] "./S"
+```
+
 ---
-class: inverse
+
+## 연습문제
+
+1. **김영삼** 대통령의 첫 국무회의 연설문을 띄어쓰기 단위로 자르면 총 몇 단어인가요?
+
+1. **노태우** 대통령의 취임사를 `RcppMeCab` 패키지로 형태소 분석한 결과를 출력하세요.
+
+1. **김대중** 대통령의 취임사를 `KoNLP` 패키지의 `SimplePos09()` 함수로 형태소 분석한 결과를 출력하세요.
+
+---
+class: 
+
+## 띄어쓰기 문제
+
+MeCab은 띄어쓰기가 없는 일본어 기반의 분석기이므로 띄어쓰기가 잘 안되어 있는 상태에 영향을 덜받음.    
+KoNLP(한나눔)는 띄어쓰기가 중요한 판단 정보로 활용되어 띄어쓰기가 이상할 경우 성능에 영향을 많이 받음.
+
+.pull-left[
+```{}
+&gt; library(RcppMeCab)
+&gt; pos("롯데마트가판매하고있는흑마늘양념치킨이논란이되고있다.")
+```
+```
+## $`롯데마트가판매하고있는흑마늘양념치킨이논란이되고있다.`
+##  [1] "롯데마트/NNP" "가/JKS"       "판매/NNG"    
+##  [4] "하/XSV"       "고/EC"        "있/VX"       
+##  [7] "는/ETM"       "흑마/NNG"     "늘/MAG"      
+## [10] "양념치킨/NNP" "이/JKS"       "논란/NNG"    
+## [13] "이/JKS"       "되/VV"        "고/EC"       
+## [16] "있/VX"        "다/EF"        "./SF"     
+```
+]
+.pull-right[
+
+```r
+library(KoNLP)
+SimplePos09("롯데마트가판매하고있는흑마늘양념치킨이논란이되고있다.")
+```
+
+```
+## $롯데마트가판매하고있는흑마늘양념치킨이논란이되고있다
+## [1] "롯데마트가판매하고있는흑마늘양념치킨이논란이되고있다/N"
+## 
+## $.
+## [1] "./S"
+```
+]
+
+---
+
+## [KoSpacing](https://github.com/haven-jeon/KoSpacing) 패키지
+
+딥러닝 한글 띄어쓰기 패키지.
+
+```{}
+library(KoSpacing)
+spacing("김형호영화시장분석가는'1987'의네이버영화정보네티즌10점평에서언급된단어들을지난해12월27일부터올해1월10일까지통계프로그램R과KoNLP패키지로텍스트마이닝하여분석했다.")
+```
+```
+## [1] "김형호 영화시장 분석가는 '1987'의 네이버 영화 정보 네티즌 10점 평에서 언급된 단어들을 지난해 12월 27일부터 올해 1월 10일까지 통계 프로그램 R과 KoNLP 패키지로 텍스트마이닝하여 분석했다."
+```
+---
+
+## 띄어쓰기 적용후 결과
+
+
+```r
+library(KoSpacing)
+library(KoNLP)
+set_env()
+```
+
+```
+## loaded KoSpacing model!
+```
+
+```r
+text &lt;- "롯데마트가판매하고있는흑마늘양념치킨이논란이되고있다."
+text &lt;- spacing(text)
+SimplePos09(text)
+```
+
+```
+## $롯데마트가
+## [1] "롯데마트가/N"
+## 
+## $판매하고
+## [1] "판매/N+하고/J"
+## 
+## $있는
+## [1] "있/P+는/E"
+## 
+## $흑마늘
+## [1] "흑마늘/N"
+## 
+## $양념치킨이
+## [1] "양념치킨/N+이/J"
+## 
+## $논란이
+## [1] "논란/N+이/J"
+## 
+## $되고
+## [1] "되/P+고/E"
+## 
+## $있다
+## [1] "있/P+다/E"
+## 
+## $.
+## [1] "./S"
+```
 
 
 
 [1]: https://github.com/tidyverse/tidyverse
 [2]: https://mrchypark.github.io/kisa_finR
 [tidytextmining]: https://www.tidytextmining.com/
+[tidytext]: https://juliasilge.github.io/tidytext/
     </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
