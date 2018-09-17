@@ -36,11 +36,91 @@ class: center, middle, title-slide, inverse
 
 ### 2018년 09월 13일
 ---
-
-
 class: center, middle, title-slide, inverse
 
-## tidy data, long form과 wide form
+## 텍스트 관련 R 패키지 설치 가이드
+
+### <https://mrchypark.github.io/textR/installation>    
+
+### [pdf 다운로드](https://github.com/mrchypark/textR/blob/master/docs/installation.pdf)
+
+.footnote[\* R 3.5.1 을 기준으로 작성하였습니다.]
+
+---
+class: center, middle, title-slide, inverse
+
+## 함수를 연결하는 파이프 연산자(%>%)
+
+![](https://raw.githubusercontent.com/mrchypark/dabrp_classnote3/master/docs/img/pipes.png)
+
+---
+
+class: inverse
+## 파이프 연산자(%>%)
+
+함수를 중첩해서 사용할 일이 점점 빈번해 짐
+
+```{}
+plot(diff(log(sample(rnorm(10000,mean=10,sd=1),size=100,replace=FALSE))),col="red",type="l")
+```
+
+--
+class: inverse
+### %>%를 사용하면 
+
+.pull-left[
+
+1. 생각의 순서대로 함수를 작성할 수 있음
+1. 중간 변수 저장을 할 필요가 없음
+1. 순서가 읽이 용이하여 기억하기 좋음
+]
+.pull-right[
+```{}
+rnorm(10000,mean=10,sd=1) %>%
+  sample(size=100,replace=FALSE) %>%
+  log %>%
+  diff %>%
+  plot(col="red",type="l")
+```
+]
+---
+class: inverse
+
+## 파이프 연산자(%>%)
+
+flights 데이터에 파이프 연산자 사용예 1
+
+```{r}
+flights %>%
+  group_by(year,month,day) %>%
+  summarise(delay=mean(dep_delay, na.rm = TRUE))
+```
+---
+class: inverse
+## 파이프 연산자(%>%)
+
+group_by()는 filter()와도 함께 사용할 수 있음
+
+```{r}
+popular_dests <- flights %>% 
+  group_by(dest) %>% 
+  filter(n() > 365)
+popular_dests
+
+```
+
+---
+class: inverse
+## 파이프 연산자(%>%)
+
+사용할 데이터부터 순서대로 함수를 작성할 수 있는 장점
+
+```{r}
+popular_dests %>% 
+  filter(arr_delay > 0) %>% 
+  mutate(prop_delay = arr_delay / sum(arr_delay)) %>% 
+  select(year:day, dest, arr_delay, prop_delay)
+```
 
 ---
 
@@ -123,76 +203,105 @@ class: inverse
 
 ---
 
-class: center, middle, title-slide, inverse
-
-## 함수를 연결하는 파이프 연산자(%>%)
-
-![](https://raw.githubusercontent.com/mrchypark/dabrp_classnote3/master/docs/img/pipes.png)
-
----
 class: inverse
-## 파이프 연산자(%>%)
 
-함수를 중첩해서 사용할 일이 점점 빈번해 짐
+## tidy .yellow[text] data 란
 
-```{}
-plot(diff(log(sample(rnorm(10000,mean=10,sd=1),size=100,replace=FALSE))),col="red",type="l")
-```
+* a table with one-token-per-row    
+* 한 행(row)에 한 토큰(token)으로 구성된 테이블
+
 
 --
+
+## 그럼 Token 이란?
+
+글자 중 의미를 가진 단위를 총칭.    
+tokenization은 가지고 있는 텍스트 자원을 token 단위로 나누는 것을 뜻함.     
+ex> 자소(자음, 모음), 음소(글자), 형태소, 단어, n-gram 등
+
+---
 class: inverse
-### %>%를 사용하면 
+
+## 한글만의 특징 .yellow[형태소]
+
+형태소란 : 의미를 가지는 최소 단위
+
+> 철수가 밥을 먹었다.
+
+```{r echo=FALSE}
+library(KoNLP)
+KoNLP::MorphAnalyzer("철수가 밥을 먹었다.")
+```
+
+---
+class: inverse
+
+.pull-left[![](https://github.com/haven-jeon/KoNLP/blob/master/etcs/figures/konlp_tags.png?raw=true)]
+.pull-right[
+  ### [크게 보기](https://github.com/haven-jeon/KoNLP/blob/master/etcs/figures/konlp_tags.png?raw=true)
+  ### [여러 체계의 형태소 품사](https://docs.google.com/spreadsheets/d/1OGAjUvalBuX-oZvZ_-9tEfYD2gQe7hTGsgUpiiBSXI8/edit#gid=0)
+]
+
+---
+class: inverse
+
+## R의 대표적인 형태소 분석기
 
 .pull-left[
-
-1. 생각의 순서대로 함수를 작성할 수 있음
-1. 중간 변수 저장을 할 필요가 없음
-1. 순서가 읽이 용이하여 기억하기 좋음
+  ### RcppMeCab
+  1. 일본어 형태소 분석기인 mecab 기반
+  1. C++ 로 작성하여 속도가 매우 빠름
+  1. 일본어, 중국어 등도 사용 가능
+  1. 형태소 분석 함수를 제공
+  1. 띄어쓰기에 덜 민감함
 ]
 .pull-right[
-```{}
-rnorm(10000,mean=10,sd=1) %>%
-  sample(size=100,replace=FALSE) %>%
-  log %>%
-  diff %>%
-  plot(col="red",type="l")
-```
+  ### KoNLP
+  1. 가장 유명한 형태소 분석기
+  1. java로 작성된 한나눔 분석기 기반
+  1. 우리샘, NiaDIC 등 자체 사전
+  1. 텍스트 분석을 위한 기능들을 제공
+  1. 친절한 [설명서](https://github.com/haven-jeon/KoNLP/blob/master/etcs/KoNLP-API.md)
 ]
+
+---
+class: center, middle, title-slide, inverse
+
+## RcppMeCab 설치 확인
+
 ---
 class: inverse
 
-## 파이프 연산자(%>%)
+## RcppMeCab 실행
 
-flights 데이터에 파이프 연산자 사용예 1
-
-```{r}
-flights %>%
-  group_by(year,month,day) %>%
-  summarise(delay=mean(dep_delay, na.rm = TRUE))
+```{}
+> library(RcppMeCab)
+> pos("롯데마트가 판매하고 있는 흑마늘 양념 치킨이 논란이 되고 있다.")
 ```
----
-class: inverse
-## 파이프 연산자(%>%)
 
-group_by()는 filter()와도 함께 사용할 수 있음
-
-```{r}
-popular_dests <- flights %>% 
-  group_by(dest) %>% 
-  filter(n() > 365)
-popular_dests
-
+```
+## $`롯데마트가 판매하고 있는 흑마늘 양념 치킨이 논란이 되고 있다.`
+##  [1] "롯데마트/NNP" "가/JKS"       "판매/NNG"     "하/XSV"      
+##  [5] "고/EC"        "있/VX"        "는/ETM"       "흑/NNG"      
+##  [9] "마늘/NNG"     "양념/NNG"     "치킨/NNG"     "이/JKS"      
+## [13] "논란/NNG"     "이/JKS"       "되/VV"        "고/EC"       
+## [17] "있/VX"        "다/EF"        "./SF" 
 ```
 
 ---
+class: center, middle, title-slide, inverse
+
+## KoNLP 설치 확인
+
+---
 class: inverse
-## 파이프 연산자(%>%)
 
-사용할 데이터부터 순서대로 함수를 작성할 수 있는 장점
+## KoNLP 실행
 
-```{r}
-popular_dests %>% 
-  filter(arr_delay > 0) %>% 
-  mutate(prop_delay = arr_delay / sum(arr_delay)) %>% 
-  select(year:day, dest, arr_delay, prop_delay)
-```
+---
+class: inverse
+
+
+
+[1]: https://github.com/tidyverse/tidyverse
+[2]: https://mrchypark.github.io/kisa_finR

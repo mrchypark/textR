@@ -23,7 +23,7 @@
 
 class: center, middle, title-slide, inverse
 
-## 텍스트 분석을 위한 R 패키지 설치 가이드
+## 텍스트 분석을 위한 R 
 
 ### &lt;https://mrchypark.github.io/textR&gt;
 
@@ -36,424 +36,15 @@ class: center, middle, title-slide, inverse
 ---
 class: center, middle, title-slide, inverse
 
-## windows 10 사용자
+## 텍스트 관련 R 패키지 설치 가이드
+
+### &lt;https://mrchypark.github.io/textR/installation&gt;    
+
+### [pdf 다운로드](https://github.com/mrchypark/textR/blob/master/docs/installation.pdf)
+
+.footnote[\* R 3.5.1 을 기준으로 작성하였습니다.]
 
 ---
-class: inverse
-
-## 설치를 위한 패키지 설치
-
-아래 코드를 R 콘솔에서 실행하세요.
-
-```{}
-install.packages("remotes")
-library(remotes)
-install.packages("installr", type = "binary")
-library(installr)
-
-# 설치 화면이 나오는데, 다른 설정 변경 없이 `다음` 클릭하며 설치해주세요.
-install.rtools()
-Sys.setenv(TAR = "C:/Rtools/bin/tar.exe")
-```
----
-
-class: inverse
-
-## KoNLP 패키지 설치 및 테스트
-
-KoNLP는 가장 유명한 형태소 분석기입니다.
-
-```{}
-install_github("talgalili/installr")
-library(installr)
-
-install.java()
-install.packages("KoNLP", type = "binary")
-library(KoNLP)
-
-test &lt;- "한글 테스트 입니다."
-extractNoun(test)
-```
-맨 마지막 코드로 아래 결과가 나와야 합니다.
-```{}
-[1] "한글"   "테스트"
-```
-
----
-class: inverse
-
-## KoSpacing 패키지 설치 및 테스트
-
-KoSpacing 패키지는 자동 띄어쓰기 기능을 제공합니다.
-
-```{}
-library(remotes)
-library(installr)
-
-# 설치 화면이 나오는데, 다른 설정 변경 없이 `다음` 클릭하며 설치해주세요.
-install.conda()
-install_github('haven-jeon/KoSpacing')
-library(KoSpacing)
-spacing("김형호영화시장분석가는'1987'의네이버영화정보네티즌10점평에서언급된단어들을지난해12월27일부터올해1월10일까지통계프로그램R과KoNLP패키지로텍스트마이닝하여분석했다.")
-```
-
-아래 결과가 나오면 성공입니다.
-```{}
-[1] "김형호 영화시장 분석가는 '1987'의 네이버 영화 정보 네티즌 10점 평에서 언급된 단어들을 지난해 12월 27일부터 올해 1월 10일까지 통계 프로그램 R과 KoNLP 패키지로 텍스트마이닝하여 분석했다."
-```
-
----
-
-class: inverse
-
-## RcppMecab 패키지 설치 및 테스트
-
-RcppMecab은 빠른 형태소 분석기입니다.
-
-```{}
-library(remotes)
-install_github("mrchypark/RcppMecab")
-library(RcppMeCab)
-installMecabKoForWindows()
-installMecabKoDicForWindows()
-
-test &lt;- "한글 테스트 입니다."
-pos(test)
-```
-
-아래 결과가 나와야 합니다.
-
-```{}
-$`한글 테스트 입니다.`
-[1] "한글/NNG"      "테스트/NNG"    "입니다/VCP+EF" "./SF"
-```
-
-글자가 깨진다면 아래 코드로 시도해 보세요.
-
-```{}
-test &lt;- "한글 테스트 입니다."
-test &lt;- iconv(test, to = "UTF-8")
-pos(test)
-```
-
----
-class: inverse
-
-## 추가 패키지 설치
-
-tidytext 패키지는 텍스트를 tidy하게 다룰 수 있게 해줍니다.    
-presidentSpeechKr 패키지는 역대 대통령 연설문 텍스트를 사용할 수 있게 해주는 패키지입니다.
-
-```{}
-install.packages("tidytext")
-install_github("forkonlp/presidentSpeechKr")
-
-library(tidytext)
-library(presidentSpeechKr)
-```
-
-위 패키지들는 패키지를 불러오는 것이 동작하는 것을 확인해주세요.
-
----
-class: center, middle, title-slide, inverse
-
-## macOS 사용자
-
----
-class: inverse
-
-## 터미널에서 설치해야 하는 도구들
-
-### 1. JDK8
-
-동영상 가이드를 참고하여 설치해주세요.
-
-&lt;https://www.youtube.com/watch?v=v8xZWbIASc0&gt;
-
-```{}
-java -version
-```
-
-버전이 1.8.XXXXX 로 표시되면 잘 설치된 것입니다.
-
----
-class: inverse
-
-## 터미널에서 설치해야 하는 도구들
-
-### 2. conda3
-
-맥의 터미널에서 아래 명령어를 수행합니다.   
-설치가 시작되면, 모두 yes로 입력하면서 진행하면 설치가 완료됩니다.
-
-```{}
-wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
-bash Miniconda3-latest-MacOSX-x86_64.sh
-```
-
----
-class: inverse
-
-## 터미널에서 설치해야 하는 도구들
-
-### 3. mecab-ko
-
-형태소 분석기를 설치합니다.    
-공식 문서를 참고하세요.    
-&lt;https://bitbucket.org/eunjeon/mecab-ko-dic&gt;
-
-맥의 터미널에서 아래 명령어를 수행합니다.
-
-```{}
-wget https://bitbucket.org/eunjeon/mecab-ko/downloads/mecab-0.996-ko-0.9.2.tar.gz
-tar zxfv mecab-0.996-ko-0.9.2.tar.gz
-cd mecab-0.996-ko-0.9.2
-./configure
-make
-make check
-# 아래 실행 후 컴퓨터 비밀번호 입력
-sudo make install
-```
----
-class: inverse
-
-## 터미널에서 설치해야 하는 도구들
-
-### 4. mecab-ko-dic
-
-형태소 분석기의 사전을 설치합니다.    
-공식 문서를 참고하세요.    
-&lt;https://bitbucket.org/eunjeon/mecab-ko-dic&gt;
-
-맥의 터미널에서 아래 명령어를 수행합니다.
-
-```{}
-wget https://bitbucket.org/eunjeon/mecab-ko-dic/downloads/mecab-ko-dic-2.1.1-20180720.tar.gz
-tar zxfv mecab-ko-dic-2.1.1-20180720.tar.gz
-cd mecab-ko-dic-2.1.1-20180720
-./configure
-make
-make check
-# 아래 실행 후 컴퓨터 비밀번호 입력
-sudo make install
-```
-
----
-class: inverse
-
-## KoNLP 패키지 설치 및 테스트
-
-KoNLP는 가장 유명한 형태소 분석기입니다.
-
-```{}
-install.packages("KoNLP")
-library(KoNLP)
-
-test &lt;- "한글 테스트 입니다."
-extractNoun(test)
-```
-
-아래 결과가 나오면 잘 동작하는 것입니다.
-```{}
-[1] "한글"   "테스트"
-```
-
----
-class: inverse
-
-## KoSpacing 패키지 설치 및 테스트
-
-KoSpacing 패키지는 자동 띄어쓰기 기능을 제공합니다.
-
-```{}
-library(devtools)
-install_github('haven-jeon/KoSpacing')
-library(KoSpacing)
-spacing("김형호영화시장분석가는'1987'의네이버영화정보네티즌10점평에서언급된단어들을지난해12월27일부터올해1월10일까지통계프로그램R과KoNLP패키지로텍스트마이닝하여분석했다.")
-```
-
-아래 결과가 나오면 성공입니다.
-```{}
-[1] "김형호 영화시장 분석가는 '1987'의 네이버 영화 정보 네티즌 10점 평에서 언급된 단어들을 지난해 12월 27일부터 올해 1월 10일까지 통계 프로그램 R과 KoNLP 패키지로 텍스트마이닝하여 분석했다."
-```
-
----
-class: inverse
-
-## RcppMecab 패키지 설치 및 테스트
-
-RcppMecab은 빠른 형태소 분석기입니다.
-
-```{}
-library(devtools)
-install_github("junhewk/RcppMeCab")
-library(RcppMeCab)
-
-test &lt;- "한글 테스트 입니다."
-pos(test)
-```
-
-아래 결과가 나와야 합니다.
-
-```{}
-$`한글 테스트 입니다.`
-[1] "한글/NNG"      "테스트/NNG"    "입니다/VCP+EF" "./SF"
-```
-
----
-class: inverse
-
-## 추가 패키지 설치
-
-tidytext 패키지는 텍스트를 tidy하게 다룰 수 있게 해줍니다.    
-presidentSpeechKr 패키지는 역대 대통령 연설문 텍스트를 사용할 수 있게 해주는 패키지입니다.
-
-```{}
-install.packages("tidytext")
-install_github("forkonlp/presidentSpeechKr")
-
-library(tidytext)
-library(presidentSpeechKr)
-```
-
-위 패키지들는 패키지를 불러오는 것이 동작하는 것을 확인해주세요.
-
----
-class: inverse
-
-### 과제
-
-1. 앞의 가이드에 따라 총 5개 패키지를 설치해 주세요.
-1. 아래 코드를 R 콘솔에서 실행하여 스크린샷을 제출해 주세요.
-
-```{}
-library(KoNLP)
-library(tidytext)
-library(presidentSpeechKr)
-library(KoSpacing)
-library(RcppMeCab)
-
-test &lt;- "한글테스트입니다."
-extractNoun(test)
-spacing(test)
-pos(test)
-
-test &lt;- spacing(test)
-extractNoun(test)
-```
-
----
-
-class: center, middle, title-slide, inverse
-
-## tidy data, long form과 wide form
-
----
-
-class: center, middle, title-slide, inverse
-
-# tidy data + universe 
-
-[![](https://github.com/tidyverse/tidyverse/raw/master/man/figures/logo.png)][1]
-
----
-class: inverse
-## [tidyverse][1] 패키지는
-
-.pull-left[
-1. RStudio가 개발, 관리하는 패키지    
-1. 공식 문서가 매우 잘 되어 있음    
-1. 사용자층이 두터워 영어로 검색하면 많은 질답을 찾을 수 있음    
-1. 커뮤니티 설명글도 매우 많음    
-1. 6개의 핵심 패키지 포함 23가지 패키지로 이루어진 메타 패키지    
-1. tidy data 라는 사상과 파이프 연산자로 대동단결    
-1. 사상에 영감을 받아 맞춰서 제작하는 개인 패키지가 많음(ex&gt; [tidyquant](https://github.com/business-science/tidyquant), [tidytext](https://github.com/juliasilge/tidytext) 등)
-]
-.pull-right[
-
-```r
-if (!requireNamespace("tidyverse")){
-  install.packages("tidyverse")}
-```
-
-```
-## Loading required namespace: tidyverse
-```
-
-```r
-library(tidyverse)
-```
-
-```
-## ─ Attaching packages ─────────────────────────────────── tidyverse 1.2.1.9000 ─
-```
-
-```
-## ✔ ggplot2 3.0.0     ✔ purrr   0.2.5
-## ✔ tibble  1.4.2     ✔ dplyr   0.7.6
-## ✔ tidyr   0.8.1     ✔ stringr 1.3.1
-## ✔ readr   1.1.1     ✔ forcats 0.3.0
-```
-
-```
-## ─ Conflicts ─────────────────────────────────────── tidyverse_conflicts() ─
-## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()
-```
-]
----
-class: inverse
-## tidy data 란
-
-1. [Hadley Wickham](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html)  2. [고감자님의 블로그](http://freesearch.pe.kr/archives/3942)  3. [헬로우데이터과학](http://www.hellodatascience.com/?p=287)
-
-
-1.1 Each variable forms a column.    
-1.2 각 변수는 개별의 열(column)으로 존재한다.    
-1.3 각 열에는 개별 속성이 들어간다.    
-
-2.1 Each observation forms a row.    
-2.2 각 관측치는 행(row)를 구성한다.    
-2.3 각 행에는 개별 관찰 항목이 들어간다.    
-
-3.1 Each type of observational unit forms a table.    
-3.2 각 테이블은 단 하나의 관측기준에 의해서 조직된 데이터를 저장한다.    
-3.3 각 테이블에는 단일 유형의 데이터가 들어간다.    
-
-.footnote[
-  \* 출처 : [금융데이터 분석을 위한 R 입문][2]
-]
----
-class: inverse
-## tidy data 란
-
-![](http://garrettgman.github.io/images/tidy-1.png)
-
-.footnote[
-  \* 출처 : [Garrett Grolemund의 Data Science with R 블로그](http://garrettgman.github.io/tidying/)
-]
-
----
-class: inverse
-## long form vs wide form
-
-.pull-left[
-### long form
-
-1. 컴퓨터가 계산하기 좋은 모양
-1. tidy data의 요건을 충족
-1. tidyverse의 패키지 대부분의 입력 형태
-]
-.pull-right[
-### wide form
-
-1. 사람이 눈으로 보기 좋은 모양
-1. 2개 변수에 대한 값만 확인 가능
-1. dashboard 형이라고도 하며 조인 등 연산이 어려움
-]
-
----
-
 class: center, middle, title-slide, inverse
 
 ## 함수를 연결하는 파이프 연산자(%&gt;%)
@@ -461,6 +52,7 @@ class: center, middle, title-slide, inverse
 ![](https://raw.githubusercontent.com/mrchypark/dabrp_classnote3/master/docs/img/pipes.png)
 
 ---
+
 class: inverse
 ## 파이프 연산자(%&gt;%)
 
@@ -586,6 +178,201 @@ popular_dests %&gt;%
 ## 10  2013     1     1 DTW          16  0.000116 
 ## # ... with 131,096 more rows
 ```
+
+---
+
+class: center, middle, title-slide, inverse
+
+# tidy data + universe 
+
+[![](https://github.com/tidyverse/tidyverse/raw/master/man/figures/logo.png)][1]
+
+---
+class: inverse
+## [tidyverse][1] 패키지는
+
+.pull-left[
+1. RStudio가 개발, 관리하는 패키지    
+1. 공식 문서가 매우 잘 되어 있음    
+1. 사용자층이 두터워 영어로 검색하면 많은 질답을 찾을 수 있음    
+1. 커뮤니티 설명글도 매우 많음    
+1. 6개의 핵심 패키지 포함 23가지 패키지로 이루어진 메타 패키지    
+1. tidy data 라는 사상과 파이프 연산자로 대동단결    
+1. 사상에 영감을 받아 맞춰서 제작하는 개인 패키지가 많음(ex&gt; [tidyquant](https://github.com/business-science/tidyquant), [tidytext](https://github.com/juliasilge/tidytext) 등)
+]
+.pull-right[
+
+```r
+if (!requireNamespace("tidyverse")){
+  install.packages("tidyverse")}
+library(tidyverse)
+```
+]
+---
+class: inverse
+## tidy data 란
+
+1. [Hadley Wickham](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html)  2. [고감자님의 블로그](http://freesearch.pe.kr/archives/3942)  3. [헬로우데이터과학](http://www.hellodatascience.com/?p=287)
+
+
+1.1 Each variable forms a column.    
+1.2 각 변수는 개별의 열(column)으로 존재한다.    
+1.3 각 열에는 개별 속성이 들어간다.    
+
+2.1 Each observation forms a row.    
+2.2 각 관측치는 행(row)를 구성한다.    
+2.3 각 행에는 개별 관찰 항목이 들어간다.    
+
+3.1 Each type of observational unit forms a table.    
+3.2 각 테이블은 단 하나의 관측기준에 의해서 조직된 데이터를 저장한다.    
+3.3 각 테이블에는 단일 유형의 데이터가 들어간다.    
+
+.footnote[
+  \* 출처 : [금융데이터 분석을 위한 R 입문][2]
+]
+---
+class: inverse
+## tidy data 란
+
+![](http://garrettgman.github.io/images/tidy-1.png)
+
+.footnote[
+  \* 출처 : [Garrett Grolemund의 Data Science with R 블로그](http://garrettgman.github.io/tidying/)
+]
+
+---
+class: inverse
+## long form vs wide form
+
+.pull-left[
+### long form
+
+1. 컴퓨터가 계산하기 좋은 모양
+1. tidy data의 요건을 충족
+1. tidyverse의 패키지 대부분의 입력 형태
+]
+.pull-right[
+### wide form
+
+1. 사람이 눈으로 보기 좋은 모양
+1. 2개 변수에 대한 값만 확인 가능
+1. dashboard 형이라고도 하며 조인 등 연산이 어려움
+]
+
+---
+
+class: inverse
+
+## tidy .yellow[text] data 란
+
+* a table with one-token-per-row    
+* 한 행(row)에 한 토큰(token)으로 구성된 테이블
+
+
+--
+
+## 그럼 Token 이란?
+
+글자 중 의미를 가진 단위를 총칭.    
+tokenization은 가지고 있는 텍스트 자원을 token 단위로 나누는 것을 뜻함.     
+ex&gt; 자소(자음, 모음), 음소(글자), 형태소, 단어, n-gram 등
+
+---
+class: inverse
+
+## 한글만의 특징 .yellow[형태소]
+
+형태소란 : 의미를 가지는 최소 단위
+
+&gt; 철수가 밥을 먹었다.
+
+
+```
+## $철수가
+## [1] "철수/ncpa+가/jcc" "철수/ncpa+가/jcs"
+## 
+## $밥을
+## [1] "밥/ncn+을/jco"  "밥/ncpa+을/jco" "밥/ncps+을/jco"
+## 
+## $먹었다
+## [1] "먹/pvg+었/ep+다/ef"
+## 
+## $.
+## [1] "./sf" "./sy"
+```
+
+---
+class: inverse
+
+.pull-left[![](https://github.com/haven-jeon/KoNLP/blob/master/etcs/figures/konlp_tags.png?raw=true)]
+.pull-right[
+  ### [크게 보기](https://github.com/haven-jeon/KoNLP/blob/master/etcs/figures/konlp_tags.png?raw=true)
+  ### [여러 체계의 형태소 품사](https://docs.google.com/spreadsheets/d/1OGAjUvalBuX-oZvZ_-9tEfYD2gQe7hTGsgUpiiBSXI8/edit#gid=0)
+]
+
+---
+class: inverse
+
+## R의 대표적인 형태소 분석기
+
+.pull-left[
+  ### RcppMeCab
+  1. 일본어 형태소 분석기인 mecab 기반
+  1. C++ 로 작성하여 속도가 매우 빠름
+  1. 일본어, 중국어 등도 사용 가능
+  1. 형태소 분석 함수를 제공
+  1. 띄어쓰기에 덜 민감함
+]
+.pull-right[
+  ### KoNLP
+  1. 가장 유명한 형태소 분석기
+  1. java로 작성된 한나눔 분석기 기반
+  1. 우리샘, NiaDIC 등 자체 사전
+  1. 텍스트 분석을 위한 기능들을 제공
+  1. 친절한 [설명서](https://github.com/haven-jeon/KoNLP/blob/master/etcs/KoNLP-API.md)
+]
+
+---
+class: center, middle, title-slide, inverse
+
+## RcppMeCab 설치 확인
+
+---
+class: inverse
+
+## RcppMeCab 실행
+
+```{}
+&gt; library(RcppMeCab)
+&gt; pos("롯데마트가 판매하고 있는 흑마늘 양념 치킨이 논란이 되고 있다.")
+```
+
+```
+## $`롯데마트가 판매하고 있는 흑마늘 양념 치킨이 논란이 되고 있다.`
+##  [1] "롯데마트/NNP" "가/JKS"       "판매/NNG"     "하/XSV"      
+##  [5] "고/EC"        "있/VX"        "는/ETM"       "흑/NNG"      
+##  [9] "마늘/NNG"     "양념/NNG"     "치킨/NNG"     "이/JKS"      
+## [13] "논란/NNG"     "이/JKS"       "되/VV"        "고/EC"       
+## [17] "있/VX"        "다/EF"        "./SF" 
+```
+
+---
+class: center, middle, title-slide, inverse
+
+## KoNLP 설치 확인
+
+---
+class: inverse
+
+## KoNLP 실행
+
+---
+class: inverse
+
+
+
+[1]: https://github.com/tidyverse/tidyverse
+[2]: https://mrchypark.github.io/kisa_finR
     </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({

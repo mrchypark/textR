@@ -57,6 +57,8 @@ library(installr)
 
 # 설치 화면이 나오는데, 다른 설정 변경 없이 `다음` 클릭하며 설치해주세요.
 install.rtools()
+Sys.setenv(PATH = paste(Sys.getenv("PATH"), "C:/Rtools/mingw_64/bin/", sep = ";"))
+Sys.setenv(BINPREF = "C:/Rtools/mingw_64/bin/")
 Sys.setenv(TAR = "C:/Rtools/bin/tar.exe")
 ```
 ---
