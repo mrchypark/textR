@@ -381,7 +381,8 @@ get_speech(tar) %>%
 ]
 
 .pull-right[
-  <img src=https://cdn.namuwikiusercontent.com/s/47f895cbea4e349bc92bb773809d35f63f6ffa3de4c9e7c9bbfbdb8d7ab07cdd874510f6d749e9b96c4b5123478a9a77a1360c2d26b94dd85fbff6fe7f35f87d2153242b74e6512d9283fac5bdfe0cae?e=1544521711&k=ApwZvLBifj767cef4_rIhA width=60%>
+<https://namu.wiki/w/%ED%8C%8C%EC%9D%BC:M4nNWBR.png>
+  <img src=https://user-images.githubusercontent.com/6179259/45862373-5d2c2980-bdac-11e8-9247-3ebde14583e8.png width=60%>
 ]
 
 ---
