@@ -377,11 +377,12 @@ get_speech(tar) %>%
 ## 띄어쓰기 단위로 나눴을 때 문제점
 
 .pull-left[
-  .blue[**하다**]가 몇 가지 단어가 되는지
+  .blue[**하다**]가 몇 가지 단어가 되는지    
+  <https://namu.wiki/w/%ED%8C%8C%EC%9D%BC:M4nNWBR.png>
 ]
 
 .pull-right[
-<https://namu.wiki/w/%ED%8C%8C%EC%9D%BC:M4nNWBR.png>
+
   <img src=https://user-images.githubusercontent.com/6179259/45862373-5d2c2980-bdac-11e8-9247-3ebde14583e8.png width=60%>
 ]
 
