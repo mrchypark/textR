@@ -147,9 +147,9 @@ extractNoun(test)
 
 class: 
 
-## RcppMecab 패키지 설치 및 테스트
+## RcppMeCab 패키지 설치 및 테스트
 
-RcppMecab은 빠른 형태소 분석기입니다.
+RcppMeCab은 빠른 형태소 분석기입니다.
 
 ```{}
 install.packages("RmecabKo")
@@ -183,8 +183,9 @@ tidytext 패키지는 텍스트를 tidy하게 다룰 수 있게 해줍니다.
 presidentSpeechKr 패키지는 역대 대통령 연설문 텍스트를 사용할 수 있게 해주는 패키지입니다.
 
 ```{}
+install.packages("remotes")
 install.packages("tidytext")
-install_github("forkonlp/presidentSpeechKr")
+remotes::install_github("forkonlp/presidentSpeechKr")
 
 library(tidytext)
 library(presidentSpeechKr)
@@ -214,27 +215,13 @@ java -version
 
 버전이 1.8.XXXXX 로 표시되면 잘 설치된 것입니다.
 
----
-class: 
-
-## 터미널에서 설치해야 하는 도구들
-
-### 2. conda3
-
-맥의 터미널에서 아래 명령어를 수행합니다.   
-설치가 시작되면, 모두 yes로 입력하면서 진행하면 설치가 완료됩니다.
-
-```{}
-wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
-bash Miniconda3-latest-MacOSX-x86_64.sh
-```
 
 ---
 class: 
 
 ## 터미널에서 설치해야 하는 도구들
 
-### 3. mecab-ko
+### 2. mecab-ko
 
 형태소 분석기를 설치합니다.    
 공식 문서를 참고하세요.    
@@ -257,7 +244,7 @@ class:
 
 ## 터미널에서 설치해야 하는 도구들
 
-### 4. mecab-ko-dic
+### 3. mecab-ko-dic
 
 형태소 분석기의 사전을 설치합니다.    
 공식 문서를 참고하세요.    
@@ -299,32 +286,12 @@ extractNoun(test)
 ---
 class: 
 
-## KoSpacing 패키지 설치 및 테스트
+## RcppMeCab 패키지 설치 및 테스트
 
-KoSpacing 패키지는 자동 띄어쓰기 기능을 제공합니다.
+RcppMeCab은 빠른 형태소 분석기입니다.
 
 ```{}
 install.packages("remotes")
-library(remotes)
-install_github('mrchypark/KoSpacing')
-library(KoSpacing)
-set_env()
-spacing("김형호영화시장분석가는'1987'의네이버영화정보네티즌10점평에서언급된단어들을지난해12월27일부터올해1월10일까지통계프로그램R과KoNLP패키지로텍스트마이닝하여분석했다.")
-```
-
-아래 결과가 나오면 성공입니다.
-```{}
-[1] "김형호 영화시장 분석가는 '1987'의 네이버 영화 정보 네티즌 10점 평에서 언급된 단어들을 지난해 12월 27일부터 올해 1월 10일까지 통계 프로그램 R과 KoNLP 패키지로 텍스트마이닝하여 분석했다."
-```
-
----
-class: 
-
-## RcppMecab 패키지 설치 및 테스트
-
-RcppMecab은 빠른 형태소 분석기입니다.
-
-```{}
 library(remotes)
 install_github("junhewk/RcppMeCab")
 library(RcppMeCab)
@@ -363,23 +330,18 @@ class:
 
 ### 과제
 
-1. 앞의 가이드에 따라 총 5개 패키지를 설치해 주세요.
+1. 앞의 가이드에 따라 총 4개 패키지를 설치해 주세요.
 1. 아래 코드를 R 콘솔에서 실행하여 스크린샷을 제출해 주세요.
 
 ```{}
 library(KoNLP)
 library(tidytext)
 library(presidentSpeechKr)
-library(KoSpacing)
 library(RcppMeCab)
 
-test &lt;- "한글테스트입니다."
+test &lt;- "한글 테스트 입니다."
 extractNoun(test)
-spacing(test)
 pos(test)
-
-test &lt;- spacing(test)
-extractNoun(test)
 ```
     </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
