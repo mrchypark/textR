@@ -1,7 +1,7 @@
 ---
 title: "텍스트 분석을 위한 R 패키지 설치 가이드"
 author: "박찬엽"
-date: "2018년 09월 13일"
+date: "2018년 10월 23일"
 output:
   xaringan::moon_reader:
     seal: false
@@ -32,11 +32,13 @@ class: center, middle, title-slide,
 
 ### 박찬엽
 
-### 2018년 09월 13일
+### 2018년 10월 23일
 ---
 class: center, middle, title-slide, 
 
-## windows 10 사용자
+## windows 사용자
+
+.gray[windows 10 64bit, windows 7 32bit에서 테스트하였습니다.]
 
 ---
 class: 
@@ -46,26 +48,81 @@ class:
 아래 코드를 R 콘솔에서 실행하세요.
 
 ```{}
-# install_github 기능을 제공하는 remotes 패키지를 설치합니다.
-install.packages("remotes")
-library(remotes)
 # stringi 패키지를 설치합니다.
-# rtools 문제로 미리 컴파일된 버전을 설치합니다.
+# 미리 컴파일된 버전을 설치하는 방법입니다.
 install.packages(
     "https://github.com/gagolews/stringi/raw/master/devel/winbuilder/3.5/stringi_1.2.4.zip",
-    repos = NULL,
+    repos = NULL
 )
-# 여러 프로그램의 설치를 지원하는 installr 패키지를 설치합니다.
-install.packages("installr")
-library(installr)
 
-# 설치 화면이 나오는데, 다른 설정 변경 없이 `다음` 클릭하며 설치해주세요.
-install.rtools()
-# 환경 변수를 등록합니다.
-Sys.setenv(PATH = paste(Sys.getenv("PATH"), "C:/Rtools/mingw_64/bin/", sep = ";"))
-Sys.setenv(BINPREF = "C:/Rtools/mingw_64/bin/")
-Sys.setenv(TAR = "C:/Rtools/bin/tar.exe")
+## 패키지 버전을 확인해주세요. 1.2.4로 나오면 잘 설치된 것입니다.
+packageVersion("stringi")
 ```
+```
+## [1] ‘1.2.4’
+```
+
+---
+
+class: 
+
+## jdk 8 설치
+
+<https://www.oracle.com/technetwork/java/javase/downloads/index.html> 방문
+
+.center[
+![](https://user-images.githubusercontent.com/6179259/47305328-16a84400-d664-11e8-97f7-a190f7100d45.png)
+]
+
+
+---
+## jdk 8 설치 .small[(계속)]
+
+아래로 스크롤 하여 **Java SE 8uXXX** 에서 JDK의 다운로드 클릭
+
+.center[
+![](https://user-images.githubusercontent.com/6179259/47307015-e1522500-d668-11e8-9c26-7b5f42864423.png)
+]
+
+
+---
+## jdk 8 설치 .small[(계속)]
+
+jdk 8 다운로드를 위한 화면
+
+.center[
+![](https://user-images.githubusercontent.com/6179259/47307028-f038d780-d668-11e8-9deb-562fce2dd5ad.png)
+]
+
+---
+
+## jdk 8 설치 .small[(계속)]
+
+Java SE Devalopment Kit 8uXXX 위치에 **Accept License Agreement** 클릭
+
+.center[
+![](https://user-images.githubusercontent.com/6179259/47307041-fcbd3000-d668-11e8-8a82-748de4837851.png)
+]
+
+---
+
+## jdk 8 설치 .small[(계속)]
+
+x64가 64bit, x86이 32bit를 의미하므로 컴퓨터의 bit에 맞는 버전을 다운로드
+
+.center[
+![](https://user-images.githubusercontent.com/6179259/47307051-06df2e80-d669-11e8-8ffc-d17211494ab8.png)
+]
+---
+
+## jdk 8 설치 .small[(계속)]
+
+설치 파일을 실행 후 다른 설정없이 **Next**를 계속 클릭하여 설치를 진행
+
+.center[
+![](https://user-images.githubusercontent.com/6179259/47307337-c16f3100-d669-11e8-8ee1-b9f11e36586a.png)
+]
+
 ---
 
 class: 
@@ -75,16 +132,6 @@ class:
 KoNLP는 가장 유명한 형태소 분석기입니다.
 
 ```{}
-# java 인스톨을 지원하는 버전을 설치합니다.
-install_github("talgalili/installr")
-
-## 설치 이후에 Ctrl + Shift + F10 을 눌러 R session을 재시작해 주세요.
-
-library(installr)
-
-# 자바를 설치합니다.
-install.java()
-# KoNLP 패키지를 설치합니다.
 install.packages("KoNLP")
 library(KoNLP)
 
@@ -97,30 +144,6 @@ extractNoun(test)
 ```
 
 ---
-class: 
-
-## KoSpacing 패키지 설치 및 테스트
-
-KoSpacing 패키지는 자동 띄어쓰기 기능을 제공합니다.
-
-```{}
-library(remotes)
-library(installr)
-
-# 설치 화면이 나오는데, 다른 설정 변경 없이 `다음` 클릭하며 설치해주세요.
-install.conda()
-install_github('mrchypark/KoSpacing')
-library(KoSpacing)
-set_env()
-spacing("김형호영화시장분석가는'1987'의네이버영화정보네티즌10점평에서언급된단어들을지난해12월27일부터올해1월10일까지통계프로그램R과KoNLP패키지로텍스트마이닝하여분석했다.")
-```
-
-아래 결과가 나오면 성공입니다.
-```{}
-[1] "김형호 영화시장 분석가는 '1987'의 네이버 영화 정보 네티즌 10점 평에서 언급된 단어들을 지난해 12월 27일부터 올해 1월 10일까지 통계 프로그램 R과 KoNLP 패키지로 텍스트마이닝하여 분석했다."
-```
-
----
 
 class: 
 
@@ -128,26 +151,10 @@ class:
 
 RcppMecab은 빠른 형태소 분석기입니다.
 
-.pull-left[
 ```{}
-library(remotes)
-# 설치에 필요한 환경 변수를 등록합니다.
-Sys.setenv(
-  PATH = paste(Sys.getenv("PATH"),
-    "C:/Rtools/mingw_32/bin",
-    "C:/Rtools/mingw_64/bin",
-    sep = ";")
-  )
-install_github("mrchypark/RcppMecab")
-library(RcppMeCab)
-# mecab의 윈도우 버전을 설치합니다.
-installMecabKoForWindows()
-# mecab 사전의 윈도우 버전을 설치합니다.
-installMecabKoDicForWindows()
-```
-]
-.pull-right[
-```{}
+install.packages("RmecabKo")
+install.packages("RcppMeCab")
+RmecabKo::install_mecab("c:/mecab") # c:에 권한이 없다면 "d:/mecab"으로 설정
 test <- "한글 테스트 입니다."
 pos(test)
 ```
@@ -167,7 +174,6 @@ test <- "한글 테스트 입니다."
 test <- iconv(test, to = "UTF-8")
 pos(test)
 ```
-]
 ---
 class: 
 
