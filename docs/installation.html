@@ -155,6 +155,7 @@ RcppMeCab은 빠른 형태소 분석기입니다.
 install.packages("RmecabKo")
 install.packages("RcppMeCab")
 RmecabKo::install_mecab("c:/mecab") # c:에 권한이 없다면 "d:/mecab"으로 설정
+library(RcppMeCab)
 test &lt;- "한글 테스트 입니다."
 pos(test)
 ```
@@ -166,9 +167,14 @@ $`한글 테스트 입니다.`
 [1] "한글/NNG"      "테스트/NNG"    "입니다/VCP+EF" "./SF"
 ```
 
+---
+
+## 만약에 글자가 깨진다면
+
 글자가 깨진다면 아래 코드로 시도해 보세요.
 
 ```{}
+library(RcppMeCab)
 test &lt;- "한글 테스트 입니다."
 # iconv 함수는 인코딩을 변경하는 함수입니다.
 test &lt;- iconv(test, to = "UTF-8")
