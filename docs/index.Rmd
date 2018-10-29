@@ -1059,6 +1059,56 @@ pw %>%
 1. `사랑`과 함께 출현한 단어들과 그 빈도를 확인하세요.
 ---
 
+### 네트워크 시각화
+
+```{r message=F}
+library(igraph)
+pw_graph <- 
+  pw %>% 
+  filter(n > 5) %>%
+  graph_from_data_frame()
+pw_graph 
+```
+---
+
+### 네트워크 시각화 코드
+
+네트워크 데이터는 node, edge로 구성됨
+
+```r
+library(ggraph)
+set.seed(2018)
+
+a <- grid::arrow(type = "closed", length = unit(.1, "inches"))
+
+ggraph(pw_graph) +
+  geom_edge_link(aes(edge_alpha = n), show.legend = FALSE,
+                 arrow = a, end_cap = circle(.07, 'inches')) +
+  geom_node_point(color = "lightblue", size = 3) +
+  geom_node_text(aes(label = name), vjust = 1, hjust = 1) +
+  theme_void()
+```
+
+---
+
+### 네트워크 시각화
+.center[
+```{r echo=F}
+library(ggraph)
+set.seed(2018)
+
+a <- grid::arrow(type = "closed", length = unit(.1, "inches"))
+
+ggraph(pw_graph) +
+  geom_edge_link(aes(edge_alpha = n), show.legend = FALSE,
+                 arrow = a, end_cap = circle(.07, 'inches')) +
+  geom_node_point(color = "lightblue", size = 3) +
+  geom_node_text(aes(label = name), vjust = 1, hjust = 1) +
+  theme_void()
+```
+]
+---
+
 ### tf-idf
 
 * tf : 전체 문서내의 단어 빈도    
@@ -1200,11 +1250,12 @@ library(tidyverse)
 [출처](https://mrchypark.github.io/post/%EB%B2%88%EC%97%AD-%ED%8F%B4%EB%8D%94%EC%95%88%EC%9D%98-csv-%ED%8C%8C%EC%9D%BC%EB%93%A4%EC%9D%84-purrr-%EC%99%80-readr-%EC%9D%84-%EC%9D%B4%EC%9A%A9%ED%95%B4%EC%84%9C-%ED%95%9C%EB%B0%A9%EC%97%90-%EB%B6%88%EB%9F%AC%EC%98%A4%EA%B8%B0/)
 
 ---
+class: title, center, middle
 
-단어 정규화 > 비슷한 뜻의 단어들은 어떻게 합치나
+## 예시 프로젝트
 
-예시 프로젝트 진행
-뭐냐면...
+---
+
 
 
 
