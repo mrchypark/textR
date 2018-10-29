@@ -441,18 +441,9 @@ class:
 
 ## RcppMeCab 실행
 
-```{}
-> library(RcppMeCab)
-> pos("롯데마트가 판매하고 있는 흑마늘 양념 치킨이 논란이 되고 있다.")
-```
-
-```
-## $`롯데마트가 판매하고 있는 흑마늘 양념 치킨이 논란이 되고 있다.`
-##  [1] "롯데마트/NNP" "가/JKS"       "판매/NNG"     "하/XSV"      
-##  [5] "고/EC"        "있/VX"        "는/ETM"       "흑/NNG"      
-##  [9] "마늘/NNG"     "양념/NNG"     "치킨/NNG"     "이/JKS"      
-## [13] "논란/NNG"     "이/JKS"       "되/VV"        "고/EC"       
-## [17] "있/VX"        "다/EF"        "./SF" 
+```{r}
+library(RcppMeCab)
+pos("롯데마트가 판매하고 있는 흑마늘 양념 치킨이 논란이 되고 있다.")
 ```
 
 ---
@@ -481,60 +472,157 @@ SimplePos09("롯데마트가 판매하고 있는 흑마늘 양념 치킨이 논�
 1. **김대중** 대통령의 취임사를 `KoNLP` 패키지의 `SimplePos09()` 함수로 형태소 분석한 결과를 출력하세요.
 
 ---
+
+## 복습
+
+---
+
+## 준비
+
+```{r}
+library(tidytext)
+library(dplyr)
+library(presidentSpeechKr)
+tar <- 
+  spidx %>% 
+  filter(president == "이명박") %>% 
+  arrange(date) %>% 
+  select(link) %>% 
+  top_n(1)
+```
+
+---
 class: 
 
-## 띄어쓰기 문제
+## `unnest_tokens()` 함수 설명
 
-MeCab은 띄어쓰기가 없는 일본어 기반의 분석기이므로 띄어쓰기가 잘 안되어 있는 상태에 영향을 덜받음.    
-KoNLP(한나눔)는 띄어쓰기가 중요한 판단 정보로 활용되어 띄어쓰기가 이상할 경우 성능에 영향을 많이 받음.
+텍스트 데이터를 token 단위로 풀어내는 함수
+
+```{}
+unnest_tokens(
+  tbl = 텍스트 데이터,      # 다루고자 하는 텍스트 데이터 객체
+  output = 결과열의 이름,   # token화의 결과가 작성될 열의 이름
+  input = 목표 텍스트 열,   # 텍스트 데이터 객체 내의 텍스트 열
+  token = "word",         # 기본값(띄어쓰기 단위)이 있어 생략 가능
+  ...                     # 기타 옵션들
+  )
+```
+
+---
+
+## 연설문 여러 개 가져오기
+
+```{r}
+# 연설문 중 1개를 가져와서
+get_speech(tar) %>%
+  # 대통령 컬럼과 연설문 컬럼만 선택한 후
+  select(president, content) %>% 
+  # 연설문 컬럼을 word 단위로 쪼갠 결과물을 word라는 컬럼으로 출력
+  unnest_tokens(word, content)
+```
+
+---
+class: 
+
+## R의 대표적인 형태소 분석기
 
 .pull-left[
-```{}
-> library(RcppMeCab)
-> pos("롯데마트가판매하고있는흑마늘양념치킨이논란이되고있다.")
-```
-```
-## $`롯데마트가판매하고있는흑마늘양념치킨이논란이되고있다.`
-##  [1] "롯데마트/NNP" "가/JKS"       "판매/NNG"    
-##  [4] "하/XSV"       "고/EC"        "있/VX"       
-##  [7] "는/ETM"       "흑마/NNG"     "늘/MAG"      
-## [10] "양념치킨/NNP" "이/JKS"       "논란/NNG"    
-## [13] "이/JKS"       "되/VV"        "고/EC"       
-## [16] "있/VX"        "다/EF"        "./SF"     
-```
+  ### RcppMeCab
+  1. 일본어 형태소 분석기인 mecab 기반
+  1. C++ 로 작성하여 속도가 매우 빠름
+  1. 일본어, 중국어 등도 사용 가능
+  1. 형태소 분석 함수를 제공
+  1. 띄어쓰기에 덜 민감함
 ]
 .pull-right[
-```{r}
-library(KoNLP)
-SimplePos09("롯데마트가판매하고있는흑마늘양념치킨이논란이되고있다.")
-```
+  ### KoNLP
+  1. 가장 유명한 형태소 분석기
+  1. java로 작성된 한나눔 분석기 기반
+  1. 우리샘, NiaDIC 등 자체 사전
+  1. 텍스트 분석을 위한 기능들을 제공
+  1. 친절한 [설명서](https://github.com/haven-jeon/KoNLP/blob/master/etcs/KoNLP-API.md)
 ]
 
 ---
 
-## [KoSpacing](https://github.com/haven-jeon/KoSpacing) 패키지
-
-딥러닝 한글 띄어쓰기 패키지.
+## 형태소 분석기화 함께 사용하기
 
 ```{}
-library(KoSpacing)
-spacing("김형호영화시장분석가는'1987'의네이버영화정보네티즌10점평에서언급된단어들을지난해12월27일부터올해1월10일까지통계프로그램R과KoNLP패키지로텍스트마이닝하여분석했다.")
+unnest_tokens(
+  tbl = 텍스트 데이터,      
+  output = 결과열의 이름,   
+  input = 목표 텍스트 열,   
+  token = "word",         <---- 여기에 형태소 분석 함수를 적용
+  ...                     
+  )
 ```
-```
-## [1] "김형호 영화시장 분석가는 '1987'의 네이버 영화 정보 네티즌 10점 평에서 언급된 단어들을 지난해 12월 27일부터 올해 1월 10일까지 통계 프로그램 R과 KoNLP 패키지로 텍스트마이닝하여 분석했다."
-```
+
 ---
 
-## 띄어쓰기 적용후 결과
+```{r}
+library(RcppMeCab)
+# 연설문 중 1개를 가져와서
+(get_speech(tar) %>%
+  # 대통령 컬럼과 연설문 컬럼만 선택한 후
+  select(president, content) %>% 
+  # 연설문 컬럼을 형태소 단위로 쪼갠 결과물을 pos라는 컬럼으로 출력
+  unnest_tokens(pos, content, token=pos) -> pos_res)
+```
+
+---
+
+.pull-left[![](https://github.com/haven-jeon/KoNLP/blob/master/etcs/figures/konlp_tags.png?raw=true)]
+.pull-right[
+  ### [크게 보기](https://github.com/haven-jeon/KoNLP/blob/master/etcs/figures/konlp_tags.png?raw=true)
+  ### [여러 체계의 형태소 품사](https://docs.google.com/spreadsheets/d/1OGAjUvalBuX-oZvZ_-9tEfYD2gQe7hTGsgUpiiBSXI8/edit#gid=0)
+]
+
+
+---
+
+## 필요한 내용
+
+1. 명사(N), 동사(VV), 형용사(VA)
 
 ```{r}
-library(KoSpacing)
-library(KoNLP)
-set_env()
-text <- "롯데마트가판매하고있는흑마늘양념치킨이논란이되고있다."
-text <- spacing(text)
-SimplePos09(text)
+pos_res %>% 
+  filter(grepl("/n|/vv|/va", pos)) %>% 
+  mutate()
 ```
+
+
+
+---
+
+단어 기반 지표 설명
+
+---
+
+워드 클라우드
+
+---
+
+### 폴더 내의 파일 한 번에 불러오기
+
+```
+library(fs)
+library(tidyverse)
+"data_dir" %>% 
+  fs::dir_ls(regexp = "\\.csv$") %>% 
+  purrr::map_dfr(readr::read_csv, .id = "source") %>% 
+  dplyr::mutate(Month_Year = lubridate::myd(Month_Year, truncated = 1))
+```
+
+[출처](https://mrchypark.github.io/post/%EB%B2%88%EC%97%AD-%ED%8F%B4%EB%8D%94%EC%95%88%EC%9D%98-csv-%ED%8C%8C%EC%9D%BC%EB%93%A4%EC%9D%84-purrr-%EC%99%80-readr-%EC%9D%84-%EC%9D%B4%EC%9A%A9%ED%95%B4%EC%84%9C-%ED%95%9C%EB%B0%A9%EC%97%90-%EB%B6%88%EB%9F%AC%EC%98%A4%EA%B8%B0/)
+
+---
+
+단어 정규화 > 비슷한 뜻의 단어들은 어떻게 합치나
+
+단어 점수화
+
+예시 프로젝트 진행
+뭐냐면...
 
 
 
