@@ -472,7 +472,7 @@ SimplePos09("롯데마트가 판매하고 있는 흑마늘 양념 치킨이 논�
 1. **김대중** 대통령의 취임사를 `KoNLP` 패키지의 `SimplePos09()` 함수로 형태소 분석한 결과를 출력하세요.
 
 ---
-
+class: title, center, middle
 ## 복습
 
 ---
@@ -483,6 +483,7 @@ SimplePos09("롯데마트가 판매하고 있는 흑마늘 양념 치킨이 논�
 library(tidytext)
 library(dplyr)
 library(presidentSpeechKr)
+
 tar <- 
   spidx %>% 
   filter(president == "이명박") %>% 
@@ -503,20 +504,20 @@ unnest_tokens(
   tbl = 텍스트 데이터,      # 다루고자 하는 텍스트 데이터 객체
   output = 결과열의 이름,   # token화의 결과가 작성될 열의 이름
   input = 목표 텍스트 열,   # 텍스트 데이터 객체 내의 텍스트 열
-  token = "word",         # 기본값(띄어쓰기 단위)이 있어 생략 가능
-  ...                     # 기타 옵션들
+  token = "word",           # 기본값(띄어쓰기 단위)이 있어 생략 가능
+  ...                       # 기타 옵션들
   )
 ```
 
 ---
 
-## 연설문 여러 개 가져오기
+## 연설문 가져와서 word(띄어쓰기) 단위로 나누기
 
 ```{r}
 # 연설문 중 1개를 가져와서
-get_speech(tar) %>%
-  # 대통령 컬럼과 연설문 컬럼만 선택한 후
-  select(president, content) %>% 
+get_speech(tar, paragraph = T) %>%
+  # 문단 컬럼과 연설문 컬럼만 선택한 후
+  select(paragraph, content) %>% 
   # 연설문 컬럼을 word 단위로 쪼갠 결과물을 word라는 컬럼으로 출력
   unnest_tokens(word, content)
 ```
@@ -545,7 +546,20 @@ class:
 
 ---
 
-## 형태소 분석기화 함께 사용하기
+## 형태소 분석기
+
+```{r}
+library(RcppMeCab)
+pos("한글 텍스트를 분석하기 위해서는 형태소 분석기가 필수다.")
+```
+
+---
+class: title, center, middle
+## 시작
+
+---
+
+## 형태소 분석기와 함께 사용하기
 
 ```{}
 unnest_tokens(
@@ -559,15 +573,36 @@ unnest_tokens(
 
 ---
 
-```{r}
+## tidy 하게 형태소 분석하기
+
+RcppMeCab의 `pos()` 함수를 활용해서 형태소 단위로 쪼갠 데이터를 만듭니다.
+
+.pull-left[
+```r
 library(RcppMeCab)
+pos_res <- 
 # 연설문 중 1개를 가져와서
-(get_speech(tar) %>%
-  # 대통령 컬럼과 연설문 컬럼만 선택한 후
-  select(president, content) %>% 
-  # 연설문 컬럼을 형태소 단위로 쪼갠 결과물을 pos라는 컬럼으로 출력
-  unnest_tokens(pos, content, token=pos) -> pos_res)
+  get_speech(tar, paragraph = T) %>%
+  # 문단 컬럼과 연설문 컬럼만 선택한 후
+  select(paragraph, content) %>% 
+  # 연설문 컬럼을 형태소 단위로 쪼개 pos라는 컬럼으로 출력
+  unnest_tokens(pos, content, token=pos) %>% 
+  # pos 결과물의 순서 보장을 위해 순서 값을 추가
+  mutate(pos_order = 1:n())
+pos_res
 ```
+]
+.pull-right[
+```{r eval=T, echo=F}
+library(RcppMeCab)
+pos_res <- 
+  get_speech(tar, paragraph = T) %>%
+  select(paragraph, content) %>% 
+  unnest_tokens(pos, content, token=pos) %>% 
+  mutate(pos_order = 1:n())
+pos_res
+```
+]
 
 ---
 
@@ -577,32 +612,581 @@ library(RcppMeCab)
   ### [여러 체계의 형태소 품사](https://docs.google.com/spreadsheets/d/1OGAjUvalBuX-oZvZ_-9tEfYD2gQe7hTGsgUpiiBSXI8/edit#gid=0)
 ]
 
+---
+
+## 형태소 일부만 가져오기
+
+신뢰할 수 있는 stop word 사전 등이 없기 때문에, 형태소 분석 후 필요한 형태소만 활용
+
+.pull-left[
+```r
+pos_res %>%
+  # 우선 `filter()` 와 `grepl()` 함수
+  # 활용하여 명사만 추출
+  filter(grepl("/n", pos)) %>% 
+  # 형태소 정보를 제거
+  mutate(pos_done = gsub("/.*$", "", pos)) -> n_done
+n_done
+```
+]
+.pull-right[
+```{r echo=F}
+pos_res %>%
+  # 우선 `filter()` 와 `grepl()` 함수를 활용하여 명사만 추출
+  filter(grepl("/n", pos)) %>% 
+  # 형태소 정보를 제거
+  mutate(pos_done = gsub("/.*$", "", pos)) -> n_done
+n_done
+```
+]
 
 ---
 
-## 필요한 내용
+## 명사, 형용사, 동사 가져오기
 
-1. 명사(N), 동사(VV), 형용사(VA)
+형태소 분석 후 한 글자는 전후 맥락 없이 의미를 파악하기 어렵기 때문에 제거
 
-```{r}
-pos_res %>% 
-  filter(grepl("/n|/vv|/va", pos)) %>% 
-  mutate()
+.pull-left[
+```r
+vv_done <- 
+  pos_res %>%
+  filter(grepl("/vv", pos)) %>% 
+  mutate(pos_done = gsub("/.*$", "다", pos))
+
+va_done <- 
+  pos_res %>%
+  filter(grepl("/va", pos)) %>% 
+  mutate(pos_done = gsub("/.*$", "다", pos))
+
+pos_done <- 
+  bind_rows(n_done, vv_done, va_done) %>% 
+  arrange(pos_order) %>% 
+  # nchar() 함수는 글자수를 출력
+  filter(nchar(pos_done)>1) %>% 
+  select(paragraph, pos_done)
+pos_done
+```
+]
+.pull-right[
+```{r echo=F}
+vv_done <- 
+  pos_res %>%
+  filter(grepl("/vv", pos)) %>% 
+  mutate(pos_done = gsub("/.*$", "다", pos))
+
+va_done <- 
+  pos_res %>%
+  filter(grepl("/va", pos)) %>% 
+  mutate(pos_done = gsub("/.*$", "다", pos))
+
+pos_done <- 
+  bind_rows(n_done, vv_done, va_done) %>% 
+  arrange(pos_order) %>% 
+  filter(nchar(pos_done)>1) %>% 
+  select(paragraph, pos_done)
+pos_done
+```
+]
+
+---
+
+## 함께 사용한 함수 설명
+
+### `grepl()`
+
+`grepl()` 함수는 글자 데이터내에 찾고자 하는 글자가 있는지를 T/F 결과로 돌려줌
+
+```{}
+grepl(
+  pattern = 찾고자 하는 글자,  
+  x = 글자 데이터,             
+  fixed  = 정규식을 사용 여부, # T/F로 되어 있으며 FALSE가 기본값
+  ...                     
+  )
+```
+
+---
+
+### `gsub()`
+
+`gsub()` 함수는 찾고자 하는 글자를 원하는 글자로 바꿔줌
+
+```{}
+gsub(
+  pattern = 찾고자 하는 글자,
+  replacement = 찾은 글자가 바뀌게 될 글자,
+  x = 글자 데이터,
+  fixed  = 정규식을 사용 여부, # T/F로 되어 있으며 FALSE가 기본값
+  ...                     
+  )
 ```
 
 
+### `nchar()`
+
+`nchar()`는 글자 데이터를 받아서 글자수를 알려줌
+
+```{}
+nchar(
+  x = 세고자 하는 글자,
+  ...
+  )
+```
 
 ---
 
-단어 기반 지표 설명
+## 최소한의 정규 표현식
+
+- `^` : 이걸로 시작함    
+- `$` : 이걸로 끝남    
+- `.` : 임의의 글자 하나    
+- `?` : 앞에 있는 문자가 없거나 하나    
+- `+` : 앞에 있는 문자가 하나 이상    
+- `*` : 앞에 있는 문자가 없거나 하나 이상    
+
+참고 : https://mrchypark.github.io/dabrp_classnote3/class4
 
 ---
 
-워드 클라우드
+## 연습문제
+
+1. 아래 코드로 이명박 대통령 연설문 중 10개 를 가져오세요.
+1. `grepl()` 함수를 사용해서 제목(title 컬럼)에 나눔이 있는 연설문을 찾으세요.
+1. `gsub()` 함수를 사용해서 제목(title 컬럼)에 `인터넷 연설` 글자를 없애보세요.
+1. `mutate()` 함수를 사용해서 연설문id를 1~10까지 id 컬럼으로 추가하세요.
+1. `id`와 `content` 컬럼만 선택하세요.
+1. 형태소 분석을 하여 결과를 pos 컬럼으로 추가하세요.
+1. `grepl()` 함수를 사용해서 명사만 남겨보세요.
+1. `gsub()` 함수를 사용해서 POS 정보를 지우고 한글만 남기세요.
+
+
+```r
+library(presidentSpeechKr)
+library(tidyverse)
+tar <- 
+  spidx %>% 
+  filter(president == "이명박") %>% 
+  arrange(date) %>% 
+  top_n(10) %>% 
+  mutate(spch = map(link, get_speech)) %>% 
+  select(spch) %>% 
+  unnest
+tar
+```
+
+```{r include=FALSE}
+library(presidentSpeechKr)
+library(tidyverse)
+tar <- 
+  spidx %>% 
+  filter(president == "이명박") %>% 
+  arrange(date) %>% 
+  top_n(10) %>% 
+  mutate(spch = map(link, get_speech)) %>% 
+  select(spch) %>% 
+  unnest
+tar
+```
+
 
 ---
 
-### 폴더 내의 파일 한 번에 불러오기
+## 앞선 코드의 문제점
+
+`활기찬다` 같은 글자가 발생
+
+```{r}
+pos_res %>%
+  filter(grepl("/va", pos)) %>% 
+  mutate(pos_done = gsub("/.*$", "다", pos))
+```
+
+---
+
+## 문제를 해결해 보자
+
+추가 패키지가 필요함
+
+```{r}
+library(tidyr)
+library(purrr)
+library(KoNLP)
+```
+
+---
+
+### 문제를 해결해 보자
+
+.pull-left[
+```{r}
+n_done <- 
+  pos_res %>%
+  filter(grepl("/n", pos)) %>% 
+  mutate(pos_done = gsub("/.*$", "", pos))
+
+v_done <- 
+  pos_res %>%
+  filter(grepl("/v(a|v)$", pos)) %>% 
+  mutate(pos_done = gsub("/.*$", "다", pos))
+
+sn_done <- 
+  pos_res %>%
+  filter(grepl("/sn", pos)) %>% 
+  mutate(pos_done = gsub("/.*$", "", pos))
+
+jamos <-
+  function(text) {
+    paste0(
+      convertHangulStringToJamos(text)
+      , collapse = "")
+  }
+```
+]
+.pull-right[
+```{r}
+etm_done <-
+  pos_res %>%
+  filter(grepl("/v(a|v)\\+etm", pos)) %>%
+  mutate(po = gsub("/.*$", "", pos)) %>% 
+  mutate(post = po %>% 
+           map(jamos)) %>%
+  unnest %>%
+  mutate(n = nchar(post)) %>% 
+  mutate(posts = substr(post, 1, n - 1)) %>%
+  mutate(done = posts %>% 
+           map_chr(HangulAutomata)) %>% 
+  mutate(pos_done = paste0(done, "다"))
+
+pos_done<- 
+  bind_rows(sn_done,
+          n_done,
+          v_done,
+          etm_done) %>%
+  filter(nchar(pos_done)>1) %>% 
+  arrange(pos_order) %>% 
+  select(paragraph, pos_done)
+```
+]
+---
+
+## 단어 기반 지표
+
+1. 단어 출현 빈도 : 단순히 단어가 나타난 횟수를 세서 확인
+1. 동시 출현 빈도 : 기준 단어와 함께 나타난 단어들과 그 횟수를 세서 확인
+1. tf-idf : 전체 문서에서 나타난 횟수와 개별 문서에서 나타난 횟수로 만든 지표
+--
+.center[
+![](https://user-images.githubusercontent.com/6179259/47669547-78c9f180-dbee-11e8-85e8-e01cb4cbe46d.png)
+]
+
+---
+
+### 단어 출현 빈도
+
+`count()` 함수는 데이터에서 총 몇 번 나왔는지 세어주는 집계함수. `group_by()`와 함께 사용하여 각 연설문별 출현 횟수 등을 구할 수 있음.
+
+```{r}
+library(dplyr)
+wn <-
+  pos_done %>% 
+  count(pos_done, sort=T)
+wn
+```
+
+---
+
+### 워드클라우드
+
+`count()` 함수로 단어와 그 빈도 테이블을 만들었다면, {wordcloud} 패키지를 사용해서 워드클라우드를 만들 수 있음
+.pull-left[
+```r
+library(wordcloud)
+wn %>% 
+  with(wordcloud(pos_done, n))
+```
+]
+.pull-right[
+```{r echo=F, message=F}
+library(extrafont)
+loadfonts()
+```
+
+```{r echo=F}
+library(wordcloud)
+library(showtext)
+## font_import(pattern = 'NanumBarunGothic')
+wn %>% 
+  with(wordcloud(pos_done, n, family = "NanumBarunGothic"))
+```
+]
+
+---
+
+### 빈도에 따른 색 입히기
+
+<https://github.com/EmilHvitfeldt/r-color-palettes> 에 R에서 사용할 수 있는 색 테마 패키지들을 소개하고 있음.
+.pull-left[
+```r
+## install.packages("Redmonder")
+library(Redmonder)
+pal = redmonder.pal(6, "sPBIRdPu")
+
+wn %>% 
+  with(wordcloud(pos_done, 
+                 n, 
+                 colors = pal))
+```
+]
+.pull-right[
+```{r echo=F}
+## install.packages("Redmonder")
+library(Redmonder)
+pal = redmonder.pal(6, "sPBIRdPu")
+
+wn %>% 
+  with(wordcloud(pos_done, 
+                 n, 
+                 family = "NanumBarunGothic",
+                 colors = pal))
+
+```
+]
+
+---
+
+### 연습문제
+
+* 49p 연습문제에서 사용한 `tar`를 이용해 진행해 주세요.    
+* `tar` 는 이명박 대통령의 라디오 연설문 10건 입니다.
+
+1. `tar`의 `content` 컬럼을 `pos()` 함수로 형태소 분석을 진행해주세요.
+1. 그 중 명사만 남기고, 형태소 정보는 지워주세요. 한글자 명사도 지워주세요.
+1. `count()` 함수를 이용해서 단어 출현 빈도를 계산해 주세요.
+1. wordcloud를 만들어 주세요.
+1. 다른 색 조합으로 시도해 주세요.
+1. `group_by()`를 활용하여 각 연설문 별로 단어 출현 빈도를 계산해주세요.
+1. 각 연설문에서 "우리"가 몇 번 사용되었는지 확인해주세요.
+
+---
+
+### 동시 출현 빈도
+
+`pairwise_count()` 함수는 그룹 단위 내에서 단어가 동시에 출현한 횟수를 세어주는 함수. 보통 문장 단위를 그룹으로 처리
+
+.pull-left[
+```r
+## install.packages("widyr" ,dependencies = T)
+library(widyr)
+pw_tar <- 
+  tar %>% 
+  unnest_tokens(sent, content, token="sentences") %>% 
+  mutate(id = as.numeric(1:n())) %>% 
+  unnest_tokens(pos, sent, token=pos) %>% 
+  select(id, pos) %>% 
+  filter(grepl("/n|/v(v|a)", pos)) %>% 
+  mutate(pos = gsub("/.*$","",pos)) %>% 
+  filter(nchar(pos) > 1)
+
+pw <-
+  pw_tar %>% 
+  pairwise_count(pos, id, sort = T, upper = F)
+pw
+```
+]
+.pull-right[
+```{r echo=F}
+## install.packages("widyr" ,dependencies = T)
+library(widyr)
+pw_tar <- 
+  tar %>% 
+  unnest_tokens(sent, content, token="sentences") %>% 
+  mutate(id = as.numeric(1:n())) %>% 
+  unnest_tokens(pos, sent, token=pos) %>% 
+  select(id, pos) %>% 
+  filter(grepl("/n|/v(v|a)", pos)) %>% 
+  mutate(pos = gsub("/.*$","",pos)) %>% 
+  filter(nchar(pos) > 1)
+
+pw <-
+  pw_tar %>% 
+  pairwise_count(pos, id, sort = T, upper = F)
+pw
+```
+]
+
+---
+
+### 기준 단어로 데이터 탐색
+
+`filter()` 함수로 기준 단어를 조회하면 함께 자주 나오는 단어와 그 빈도를 확인할 수 있음
+.pull-left[
+```{r}
+pw %>%
+  filter(item1 == "우리")
+```
+]
+.pull-right[
+```{r echo=F}
+library(forcats)
+library(ggplot2)
+# bar plot
+pw %>%
+  filter(item1 %in% c("우리")) %>% 
+  top_n(15) %>% 
+  mutate(item2 = fct_reorder(item2, n, .desc = TRUE)) %>% 
+  ggplot(aes(x = item2, y = n, fill = item1)) +
+  geom_bar(stat = "identity")
+```
+
+]
+---
+
+### 연습문제
+
+* 49p 연습문제에서 사용한 `tar`를 이용해 진행해 주세요.    
+* `tar` 는 이명박 대통령의 라디오 연설문 10건 입니다.
+
+1. `tar`의 `content` 컬럼을 문장 단위로 나누어 주세요.
+1. 새롭게 문장별 id를 `id` 컬럼으로 추가해주세요.
+1. 문장별 id를 유지한 채로 `pos()` 함수를 사용하여 형태소 분석을 진행해 주세요.
+1. 명사(`/n`), 동사(`/vv`), 형용사(`/va`)인 형태소만 가져와 주세요.
+1. 형태소 정보는 제거하지 말고 그대로 두세요.
+1. 동시 출현 빈도 테이블을 만들어 주세요. (컬럼이 item1, item2, n으로 구성됩니다.)
+1. `우리/np`와 함께 출현한 단어들과 그 빈도를 확인하세요.
+1. 명사는 형태소 정보를 제거하고, 형용사와 동사는 형태소 정보를 제거한후 뒤에 `다`를 붙여주세요.
+1. 한 글자는 제거해 주세요.
+1. 동시 출현 빈도 테이블을 만들어 주세요. (컬럼이 item1, item2, n으로 구성됩니다.)
+1. `사랑`과 함께 출현한 단어들과 그 빈도를 확인하세요.
+---
+
+### tf-idf
+
+* tf : 전체 문서내의 단어 빈도    
+* idf : 단어를 가지는 문서 비율의 역수
+
+.center[
+![](https://user-images.githubusercontent.com/6179259/47669547-78c9f180-dbee-11e8-85e8-e01cb4cbe46d.png)
+]
+
+---
+
+### tf-idf
+
+`bind_tf_idf()` 함수가 `tf`, `idf`, `tf-idf` 점수 모두를 제공하며 문서 단위의 정의가 매우 중요함. 보통 각 연설문, 개별 뉴스 본문 등을 하나의 문서로 정의함. `tf-idf` 가 높을 수록 각 문서에서 특별한 의미를 지니는 것으로 판단할 수 있음. 
+
+
+.pull-left[
+```r
+library(tidytext)
+
+tfidf_tar <- 
+  tar %>% 
+  mutate(id = as.numeric(1:n())) %>% 
+  unnest_tokens(pos, content, token=pos) %>% 
+  select(id, pos) %>% 
+  filter(grepl("/n|/v(v|a)", pos)) %>% 
+  mutate(pos = gsub("/.*$","",pos)) %>% 
+  filter(nchar(pos) > 1) %>% 
+  group_by(id) %>% 
+  count(pos)
+
+tfidf_tar %>% 
+  bind_tf_idf(pos, id, n) %>% 
+  arrange(desc(tf_idf))
+```
+]
+.pull-right[
+```{r echo=F}
+library(tidytext)
+
+tfidf_tar <- 
+  tar %>% 
+  mutate(id = as.numeric(1:n())) %>% 
+  unnest_tokens(pos, content, token=pos) %>% 
+  select(id, pos) %>% 
+  filter(grepl("/n|/v(v|a)", pos)) %>% 
+  mutate(pos = gsub("/.*$","",pos)) %>% 
+  filter(nchar(pos) > 1) %>% 
+  group_by(id) %>% 
+  count(pos)
+
+tfidf_tar %>% 
+  bind_tf_idf(pos, id, n) %>% 
+  arrange(desc(tf_idf))
+```
+]
+
+---
+
+### 연습문제
+
+* 49p 연습문제에서 사용한 `tar`를 이용해 진행해 주세요.    
+* `tar` 는 이명박 대통령의 라디오 연설문 10건 입니다.
+
+1. 새롭게 연설문별 id를 `id` 컬럼으로 추가해주세요.
+1. 문장별 id를 유지한 채로 `pos()` 함수를 사용하여 형태소 분석을 진행해 주세요.
+1. 명사(`/n`), 동사(`/vv`), 형용사(`/va`)인 형태소만 가져와 주세요.
+1. 명사는 형태소 정보를 제거하고, 형용사와 동사는 형태소 정보를 제거한후 뒤에 `다`를 붙여주세요.
+1. 한 글자는 제거해 주세요.
+1. 연설문 별로 형태소 단위 빈도를 계산해 주세요.
+1. `bind_tf_idf()` 함수를 사용해서 `tf`, `idf`, `tf-idf` 를 계산해주세요.
+1. 각 연설문 별로 `tf-idf` 점수가 가장 높은 단어를 확인하세요.
+1. 각 연설문 별로 `tf-idf` 점수가 가장 높은 3개 단어씩을 확인하세요.
+
+---
+
+## 감성 분석
+
+- 감성 분석은 각 단어의 감성 사전을 구축하여 점수를 주는 방식
+- 한글의 특성상, 형태소이며 ngram에 점수를 부여하는 것이 가장 효과적일 것
+- 단순한 형태로는 unigram의 형태소에 점수나 종류를 부여하는 것
+- 개별 단어의 점수를 부여한 뒤 문장 단위로 합산하여 계산
+- 합산으로 0에 가까운 값이 나올 수 도 있으므로 점수를 부여받은 단어의 갯수등 도 고려 필요
+- 안정적으로 기구축된 한글 사전을 찾기 어려움
+
+---
+
+### 사전 소개
+
+[KnuSentiLex](https://github.com/park1200656/KnuSentiLex)는 군산대 [Data Intelligence Lab](http://dilab.kunsan.ac.kr/)에서 기존 사전들을 참조, 활용하여 18년 구축한 감성 사전. 구조가 단순하고 이모티콘 등을 추가한 점이 장점인 반면, 형태소 형식이 아니라 점수의 신뢰도가 낮은 편임.
+
+[KOSAC](http://word.snu.ac.kr/kosac/)은 서울대에서 13년에 구축한 감성사전으로 구조가 복잡하고 점수를 내기 어렵지만 12년에 구축한 감성 스키마를 따르고 있어 다양한 감성 정보를 얻을 수 있음.
+
+본 예시에는 구조가 단순한 `KnuSentiLex`을 사용
+
+```{r}
+## remotes::install_github("mrchypark/KnuSentiLexR")
+library(KnuSentiLexR)
+senti_tar <- 
+  tar %>% 
+  unnest_tokens(sent, content, token="sentences") %>% 
+  filter(nchar(sent) < 20) %>% 
+  select(sent)
+```
+
+---
+
+### 감성 분석
+
+- `senti_score()` 함수는 문장을 unigram 부터 3-gram 까지 작성한 후, 감성 사전에 점수를 합산하여 문장 점수를 계산    
+- `senti_magnitude()` 함수는 몇개의 ngram이 점수화되었는지를 계산    
+- `dic` 객체가 word, polarity 컬럼을 가지고 있는 감성 사전임
+
+```{r}
+senti_tar %>% 
+  mutate(score = senti_score(sent),
+         magni = senti_magnitude(sent)) %>% 
+  filter(score != 0)
+```
+
+---
+class: title, center, middle
+
+## 파일 불러오기
+
+---
+
+### 폴더 내의 파일들 한 번에 불러오기
 
 ```
 library(fs)
@@ -619,10 +1203,9 @@ library(tidyverse)
 
 단어 정규화 > 비슷한 뜻의 단어들은 어떻게 합치나
 
-단어 점수화
-
 예시 프로젝트 진행
 뭐냐면...
+
 
 
 
