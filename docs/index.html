@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
   <head>
     <title>텍스트 분석을 위한 R</title>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <meta name="author" content="박찬엽" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
     <script>
@@ -32,7 +32,7 @@ class: center, middle, title-slide,
 
 ### 박찬엽
 
-### 2018년 09월 18일
+### 2018년 09월 18일.small[(update: 2019년 4월 17일)]
 ---
 class: center, middle, title-slide, 
 
@@ -699,18 +699,14 @@ class: title, center, middle
 ```r
 library(tidytext)
 library(dplyr)
-library(presidentSpeechKr)
+library(presidentSpeech)
 
 tar &lt;- 
   spidx %&gt;% 
   filter(president == "이명박") %&gt;% 
-  arrange(date) %&gt;% 
-  select(link) %&gt;% 
-  top_n(1)
-```
-
-```
-## Selecting by link
+  arrange(desc(date)) %&gt;% 
+  pull(link) %&gt;% 
+  .[1]
 ```
 
 ---
@@ -789,20 +785,34 @@ class:
 
 
 ```r
-library(RcppMeCab)
-pos("한글 텍스트를 분석하기 위해서는 형태소 분석기가 필수다.")
+library(KoNLP)
+SimplePos09("한글 텍스트를 분석하기 위해서는 형태소 분석기가 필수다.")
 ```
 
 ```
-## $`&lt;c7&gt;&lt;U+0471&gt;&lt;db&gt; &lt;c5&gt;&lt;U+063D&gt;&lt;U+00BA&gt;&lt;U+01AE&gt;&lt;U+00B8&gt;&lt;U+00A6&gt; &lt;U+00BA&gt;м&lt;U+00AE&gt;&lt;c7&gt;&lt;U+03F1&gt;&lt;e2&gt; &lt;U+0027&gt;&lt;c7&gt;&lt;U+063C&gt;&lt;U+00AD&gt;&lt;U+00B4&gt;&lt;c2&gt; &lt;c7&gt;&lt;fc&gt;&lt;c5&gt;¼&lt;d2&gt; &lt;U+00BA&gt;м&lt;U+00AE&gt;&lt;U+00B1&gt;&lt;U+2C21&gt; &lt;c7&gt;&lt;U+02BC&gt;&lt;f6&gt;&lt;U+00B4&gt;&lt;d9&gt;.`
-##  [1] "&lt;c7&gt;&lt;d1&gt;/SL"         "&lt;U+00B1&gt;&lt;db&gt; /SY"    "&lt;c5&gt;&lt;d8&gt;/SL"        
-##  [4] "&lt;U+00BD&gt;&lt;U+00BA&gt;/SY" "&lt;U+01AE&gt;/SL"         "&lt;U+00B8&gt;&lt;U+00A6&gt;/SY"
-##  [7] "&lt;U+00BA&gt;/SY"         "м/SL"               "&lt;U+00AE&gt;/SY"        
-## [10] "&lt;c7&gt;&lt;cf&gt;/SL"         "&lt;U+00B1&gt;/SY"         "&lt;e2&gt; &lt;c0&gt;/SY"       
-## [13] "&lt;U+00A7&gt;/SY"         "&lt;c7&gt;&lt;d8&gt;/SL"         "&lt;U+00BC&gt;&lt;U+00AD&gt;&lt;U+00B4&gt;&lt;c2&gt; /SY"
-## [16] "&lt;c7&gt;&lt;fc&gt;&lt;c5&gt;&lt;c2&gt;/SL" "&lt;U+00BC&gt;/SY"         "&lt;d2&gt; /SL"           
-## [19] "&lt;U+00BA&gt;/SY"         "м/SL"               "&lt;U+00AE&gt;&lt;U+00B1&gt;&lt;U+2C21&gt;/SY"
-## [22] "&lt;c7&gt;&lt;ca&gt;/SL"         "&lt;U+00BC&gt;&lt;f6&gt;&lt;U+00B4&gt;&lt;d9&gt;./SY"
+## $한글
+## [1] "한글/N"
+## 
+## $텍스트를
+## [1] "텍스트/N+를/J"
+## 
+## $분석하기
+## [1] "분석하기/N"
+## 
+## $위해서는
+## [1] "위하/P+어서/E+는/J"
+## 
+## $형태소
+## [1] "형태소/N"
+## 
+## $분석기가
+## [1] "분석기/N+가/J"
+## 
+## $필수다
+## [1] "피/P+ㄹ/E+수/N+이/J+다/E"
+## 
+## $.
+## [1] "./S"
 ```
 
 ---
@@ -827,18 +837,20 @@ unnest_tokens(
 
 ## tidy 하게 형태소 분석하기
 
-RcppMeCab의 `pos()` 함수를 활용해서 형태소 단위로 쪼갠 데이터를 만듭니다.
+KoNLP의 `SimplePos09()` 함수를 활용해서 형태소 단위로 쪼갠 데이터를 만듭니다.
 
 .pull-left[
 ```r
-library(RcppMeCab)
+library(KoNLP)
 pos_res &lt;- 
 # 연설문 중 1개를 가져와서
   get_speech(tar, paragraph = T) %&gt;%
   # 문단 컬럼과 연설문 컬럼만 선택한 후
   select(paragraph, content) %&gt;% 
-  # 연설문 컬럼을 형태소 단위로 쪼개 pos라는 컬럼으로 출력
-  unnest_tokens(pos, content, token=pos) %&gt;% 
+  # 연설문 컬럼을 형태소 단위로 쪼개 
+  # pos라는 컬럼으로 출력
+  unnest_tokens(pos, content, 
+                token = SimplePos09) %&gt;% 
   # pos 결과물의 순서 보장을 위해 순서 값을 추가
   mutate(pos_order = 1:n())
 pos_res
@@ -847,20 +859,20 @@ pos_res
 .pull-right[
 
 ```
-## # A tibble: 1,380 x 3
-##    paragraph pos           pos_order
-##        &lt;int&gt; &lt;chr&gt;             &lt;int&gt;
-##  1         1 안녕/nng              1
-##  2         1 하/xsv                2
-##  3         1 십니까/ep+ef          3
-##  4         1 ,/sc                  4
-##  5         1 대통령/nng            5
-##  6         1 입니다/vcp+ef         6
-##  7         1 !/sf                  7
-##  8         2  /sy                  8
-##  9         3 2/sn                  9
-## 10         3 년/nnbc              10
-## # ... with 1,370 more rows
+## # A tibble: 10,969 x 3
+##    paragraph pos                   pos_order
+##        &lt;int&gt; &lt;chr&gt;                     &lt;int&gt;
+##  1         1 사회자(sbs/n                  1
+##  2         1 논설위원/n                    2
+##  3         1 김형민/n+)/s                  3
+##  4         1 여러분/n                      4
+##  5         1 안녕하십니까/n+,/s            5
+##  6         1 ‘대통령과/n+의/j              6
+##  7         1 원탁/n                        7
+##  8         1 대화/n                        8
+##  9         1 어떻/p+게/e                   9
+## 10         1 생각하십니까,’/n+의/j        10
+## # ... with 10,959 more rows
 ```
 ]
 
@@ -885,27 +897,28 @@ pos_res %&gt;%
   # 활용하여 명사만 추출
   filter(grepl("/n", pos)) %&gt;% 
   # 형태소 정보를 제거
-  mutate(pos_done = gsub("/.*$", "", pos)) -&gt; n_done
+  mutate(pos_done = gsub("/.*$", "", pos)) -&gt; 
+  n_done
 n_done
 ```
 ]
 .pull-right[
 
 ```
-## # A tibble: 509 x 4
-##    paragraph pos          pos_order pos_done
-##        &lt;int&gt; &lt;chr&gt;            &lt;int&gt; &lt;chr&gt;   
-##  1         1 안녕/nng             1 안녕    
-##  2         1 대통령/nng           5 대통령  
-##  3         3 년/nnbc             10 년      
-##  4         3 전/nng              11 전      
-##  5         3 월/nnbc             14 월      
-##  6         3 일/nnbc             16 일      
-##  7         3 소말리아/nnp        18 소말리아
-##  8         3 해적/nng            19 해적    
-##  9         3 소탕/nng            21 소탕    
-## 10         3 아덴만/nnp          23 아덴만  
-## # ... with 499 more rows
+## # A tibble: 5,939 x 4
+##    paragraph pos                   pos_order pos_done      
+##        &lt;int&gt; &lt;chr&gt;                     &lt;int&gt; &lt;chr&gt;         
+##  1         1 사회자(sbs/n                  1 사회자(sbs    
+##  2         1 논설위원/n                    2 논설위원      
+##  3         1 김형민/n+)/s                  3 김형민        
+##  4         1 여러분/n                      4 여러분        
+##  5         1 안녕하십니까/n+,/s            5 안녕하십니까  
+##  6         1 ‘대통령과/n+의/j              6 ‘대통령과     
+##  7         1 원탁/n                        7 원탁          
+##  8         1 대화/n                        8 대화          
+##  9         1 생각하십니까,’/n+의/j        10 생각하십니까,’
+## 10         1 사회/n+를/j                  11 사회          
+## # ... with 5,929 more rows
 ```
 ]
 
@@ -1580,6 +1593,7 @@ class: title, center, middle
 [tidytextmining]: https://www.tidytextmining.com/
 [tidytext]: https://juliasilge.github.io/tidytext/
     </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
 "highlightStyle": "github",
@@ -1590,16 +1604,57 @@ class: title, center, middle
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
 });
-(function() {
-  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
   if (!r) return;
   s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
   d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
 })();</script>
 
 <script>
 (function() {
-  var i, text, code, codes = document.getElementsByTagName('code');
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
   for (i = 0; i < codes.length;) {
     code = codes[i];
     if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
@@ -1613,7 +1668,8 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     i++;
   }
-})();
+};
+slideshow._releaseMath(document);
 </script>
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
