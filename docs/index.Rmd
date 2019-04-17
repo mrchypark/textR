@@ -343,7 +343,7 @@ get_speech(tar) %>%
   select(president, content) %>% 
   unnest_tokens(
     input = content,
-    ouput = word
+    output = word
     )
 ```
 
@@ -375,7 +375,7 @@ get_speech(tar) %>%
   # 연설문 컬럼을 word 단위로 쪼갠 결과물을 word라는 컬럼으로 출력
   unnest_tokens(
     input = content,
-    ouput = word
+    output = word
     )
 ```
 
@@ -494,7 +494,7 @@ library(presidentSpeech)
 
 spidx %>% 
   filter(president == "이명박") %>% 
-  top_n(1, wt = desc(date)) %>% 
+  filter(grepl("취임사", title)) %>% 
   pull(link) -> 
   tar
 ```
@@ -528,7 +528,7 @@ get_speech(tar, paragraph = T) %>%
   # 연설문 컬럼을 word 단위로 쪼갠 결과물을 word라는 컬럼으로 출력
   unnest_tokens(
     input = content,
-    ouput = word
+    output = word
     )
 ```
 
@@ -574,8 +574,8 @@ class: title, center, middle
 ```{}
 unnest_tokens(
   tbl = 텍스트 데이터,      
-  output = 결과열의 이름,   
   input = 목표 텍스트 열,   
+  output = 결과열의 이름,   
   token = "word",         <---- 여기에 형태소 분석 함수를 적용
   ...                     
   )
@@ -791,6 +791,35 @@ spidx %>%
 tar
 ```
 
+---
+
+## RcppMeCab 으로 진행해보자
+
+```r
+library(presidentSpeech)
+library(magrittr)
+library(tidyverse)
+spidx %>% 
+  filter(president == "이명박") %>% 
+  arrange(date) %>% 
+  top_n(10) %$% 
+  map_dfr(link, get_speech) ->
+  tar
+tar
+```
+
+```{r include=FALSE}
+library(RcppMeCab)
+spidx %>% 
+  filter(president == "이명박") %>% 
+  filter(grepl("취임사", title)) %>% 
+  pull(link) %>% 
+  get_speech(paragraph = T) %>%
+  select(paragraph, content) %>% 
+  unnest_tokens(pos, content, token = pos) %>% 
+  mutate(pos_order = 1:n()) -> 
+  pos_res
+```
 
 ---
 
@@ -860,12 +889,12 @@ etm_done <-
            map_chr(HangulAutomata)) %>% 
   mutate(pos_done = paste0(done, "다"))
 
-pos_done<- 
+pos_done <- 
   bind_rows(sn_done,
           n_done,
           v_done,
           etm_done) %>%
-  filter(nchar(pos_done)>1) %>% 
+  filter(nchar(pos_done) > 1) %>% 
   arrange(pos_order) %>% 
   select(paragraph, pos_done)
 ```
@@ -890,9 +919,9 @@ pos_done<-
 
 ```{r}
 library(dplyr)
-wn <-
-  pos_done %>% 
-  count(pos_done, sort=T)
+pos_done %>% 
+  count(pos_done, sort = T) -> 
+  wn
 wn
 ```
 
@@ -1212,7 +1241,7 @@ tfidf_tar %>%
 library(KnuSentiLexR)
 senti_tar <- 
   tar %>% 
-  unnest_tokens(sent, content, token="sentences") %>% 
+  unnest_tokens(sent, content, token = "sentences") %>% 
   filter(nchar(sent) < 20) %>% 
   select(sent)
 ```
@@ -1256,11 +1285,6 @@ library(tidyverse)
 class: title, center, middle
 
 ## 예시 프로젝트
-
----
-
-
-
 
 
 [1]: https://github.com/tidyverse/tidyverse
