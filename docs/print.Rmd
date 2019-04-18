@@ -1,8 +1,10 @@
 ---
 title: "텍스트 분석을 위한 R"
-subtitle: "LG 인화원"
-author: "강사: 박찬엽"
+subtitle: "Tidytext와 형태소 분석기를 이용한 텍스트 마이닝 기초"
+author: "박찬엽"
 date: "2019년 04월 24일"
+email: "mrchypark@gmail.com"
+homepage: "https://mrchypark.github.io/"
 output:
   pagedown::html_paged:
     toc: true
