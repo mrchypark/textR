@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
   <head>
     <title>텍스트 분석을 위한 R</title>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <meta name="author" content="박찬엽" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
     <script>
@@ -32,7 +32,7 @@ class: center, middle, title-slide,
 
 ### 박찬엽
 
-### 2018년 09월 18일
+### 2018년 09월 18일.small[(update: 2019년 4월 17일)]
 ---
 class: center, middle, title-slide, 
 
@@ -93,12 +93,12 @@ flights 데이터에 파이프 연산자 사용예 1
 ```r
 flights %&gt;%
   group_by(year,month,day) %&gt;%
-  summarise(delay=mean(dep_delay, na.rm = TRUE))
+  summarise(delay = mean(dep_delay, na.rm = TRUE))
 ```
 
 ```
 ## # A tibble: 365 x 4
-## # Groups:   year, month [?]
+## # Groups:   year, month [12]
 ##     year month   day delay
 ##    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
 ##  1  2013     1     1 11.5 
@@ -121,9 +121,10 @@ group_by()는 filter()와도 함께 사용할 수 있음
 
 
 ```r
-popular_dests &lt;- flights %&gt;% 
+flights %&gt;% 
   group_by(dest) %&gt;% 
-  filter(n() &gt; 365)
+  filter(n() &gt; 365) -&gt; 
+  popular_dests
 popular_dests
 ```
 
@@ -205,9 +206,33 @@ class:
 .pull-right[
 
 ```r
-if (!requireNamespace("tidyverse")){
+if (!requireNamespace("tidyverse")) {
   install.packages("tidyverse")}
+```
+
+```
+## Loading required namespace: tidyverse
+```
+
+```r
 library(tidyverse)
+```
+
+```
+## -- Attaching packages ----------------------------------- tidyverse 1.2.1 --
+```
+
+```
+## √ ggplot2 3.1.1     √ readr   1.3.1
+## √ tibble  2.1.1     √ purrr   0.3.2
+## √ tidyr   0.8.3     √ stringr 1.4.0
+## √ ggplot2 3.1.1     √ forcats 0.4.0
+```
+
+```
+## -- Conflicts -------------------------------------- tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()
 ```
 ]
 ---
@@ -289,13 +314,20 @@ class:
 * 여러 가지 token과 tm 패키지와의 호환 기능을 제공
 * 자세히 소개하는 [온라인 사이트(영문)][tidytextmining]
 
-  
-  ```r
-  if(!requireNamespace("tidytext")){
-    install.packages("tidytext")
-  }
-  library(tidytext)
-  ```
+
+```r
+if (!requireNamespace("tidytext")) {
+  install.packages("tidytext")
+}
+```
+
+```
+## Loading required namespace: tidytext
+```
+
+```r
+library(tidytext)
+```
 
 ]
 .pull-right[
@@ -309,16 +341,16 @@ class:
 
 ## 데이터 패키지 소개
 
-### [presidentSpeechKr](https://forkonlp.github.io/presidentSpeechKr/)
+### [presidentSpeech](https://forkonlp.github.io/presidentSpeech/)
 
-대통령 기록 연구실의 대통령 연설문을 제공
+대통령 기록 연구실의 대통령 연설문을 제공([패키지 설명](https://forkonlp.github.io/presidentSpeech/))
 
 
 ```r
-if(!requireNamespace("presidentSpeechKr")){
-  remotes::install_github("forkonlp/presidentSpeechKr")
+if (!requireNamespace("presidentSpeech")) {
+  remotes::install_github("forkonlp/presidentSpeech")
 }
-library(presidentSpeechKr)
+library(presidentSpeech)
 ```
 
 ---
@@ -369,18 +401,20 @@ class:
 
 
 ```r
+library(dplyr)
 data(spidx)
-str(spidx)
+glimpse(spidx)
 ```
 
 ```
-## Classes 'tbl_df', 'tbl' and 'data.frame':	6681 obs. of  6 variables:
-##  $ president: chr  "이승만" "이승만" "이승만" "이승만" ...
-##  $ field    : chr  "기타" "국정전반" "정치/사회" "국정전반" ...
-##  $ event    : chr  "성명/담화문" "취임사" "성명/담화문" "기타" ...
-##  $ title    : chr  "학생제군에게" "대통령 취임사(大統領就任辭) " "민족이 원하는 길을 따를 결심, 국무총리 인준 부결에 대하여 " "미급점(未及點) 육성하라 " ...
-##  $ date     : chr  "1948" "1948.07.24" "1948.07.29" "1948.08.09" ...
-##  $ link     : chr  "http://www.pa.go.kr/research/contents/speech/index.jsp?spMode=view&amp;catid=c_pa02062&amp;artid=1310475" "http://www.pa.go.kr/research/contents/speech/index.jsp?spMode=view&amp;catid=c_pa02062&amp;artid=1310440" "http://www.pa.go.kr/research/contents/speech/index.jsp?spMode=view&amp;catid=c_pa02062&amp;artid=1310441" "http://www.pa.go.kr/research/contents/speech/index.jsp?spMode=view&amp;catid=c_pa02062&amp;artid=1310442" ...
+## Observations: 6,681
+## Variables: 6
+## $ president &lt;chr&gt; "이승만", "이승만", "이승만", "이승만", "이승만", "이승만", "이승만", "이승...
+## $ field     &lt;chr&gt; "기타", "국정전반", "정치/사회", "국정전반", "정치/사회", "정치/사회", "국정...
+## $ event     &lt;chr&gt; "성명/담화문", "취임사", "성명/담화문", "기타", "성명/담화문", "성명/담화문",...
+## $ title     &lt;chr&gt; "학생제군에게", "대통령 취임사(大統領就任辭) ", "민족이 원하는 길을 따를 결심, 국무총...
+## $ date      &lt;chr&gt; "1948", "1948.07.24", "1948.07.29", "1948.08.09", "1...
+## $ link      &lt;chr&gt; "http://www.pa.go.kr/research/contents/speech/index....
 ```
 
 ---
@@ -389,18 +423,17 @@ str(spidx)
 
 
 ```r
-library(dplyr)
 spidx %&gt;% 
   filter(president == "윤보선")
 ```
 
 ```
 ## # A tibble: 3 x 6
-##   president field  event  title            date   link                    
-##   &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;            &lt;chr&gt;  &lt;chr&gt;                   
+##   president field  event  title             date   link                    
+##   &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;             &lt;chr&gt;  &lt;chr&gt;                   
 ## 1 윤보선    국정전반~ 취임사 제2대 윤보선 대통령 취임사~ 1960.~ http://www.pa.go.kr/res~
-## 2 윤보선    기타   기타   "윤보선 대통령 부산연설 \~ 1960.~ http://www.pa.go.kr/res~
-## 3 윤보선    기타   기타   "윤보선 대통령 대구연설 \~ 1960.~ http://www.pa.go.kr/res~
+## 2 윤보선    기타   기타   "윤보선 대통령 부산연설 \"~ 1960.~ http://www.pa.go.kr/res~
+## 3 윤보선    기타   기타   "윤보선 대통령 대구연설 \"~ 1960.~ http://www.pa.go.kr/res~
 ```
 
 ---
@@ -409,33 +442,26 @@ class:
 ## 연설문 텍스트 가져오기
 
 ```r
-tar &lt;- 
-  spidx %&gt;% 
+spidx %&gt;% 
   filter(president == "윤보선") %&gt;% 
-  select(link) %&gt;% 
-  top_n(1)
-```
-
-```
-## Selecting by link
-```
-
-```r
+  top_n(1, wt = desc(date)) %&gt;% 
+  pull(link) -&gt; 
+  tar
 get_speech(tar)
 ```
 
 ```
 ## # A tibble: 1 x 9
-##   title    date   president place field event source paragraph content    
-##   &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;      
-## 1 "윤보선 대통~ 1960.~ 윤보선    지역  기타  기타  ""             1 "영남지방의 한해 ~
+##   title   date   president place field event source paragraph content      
+##   &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;        
+## 1 제2대 윤보~ 1960.~ 윤보선    국내  국정전반~ 취임사~ ""             1 "제2공화국의 초대대통~
 ```
 
 ---
 
 ## 연습문제
 
-1. presidentSpeechKr 패키지에서 검색할 수 있는 대통령은 총 몇명인가요?
+1. presidentSpeech 패키지에서 검색할 수 있는 대통령은 총 몇명인가요?
 
 1. **윤보선** 대통령과 **박정희** 대통령은 각각 몇 개의 연설문이 있나요?
 
@@ -457,24 +483,27 @@ class:
 ```r
 get_speech(tar) %&gt;% 
   select(president, content) %&gt;% 
-  unnest_tokens(word, content)
+  unnest_tokens(
+    input = content,
+    output = word
+    )
 ```
 
 ```
-## # A tibble: 100 x 2
-##    president word        
-##    &lt;chr&gt;     &lt;chr&gt;       
-##  1 윤보선    영남지방의  
-##  2 윤보선    한해        
-##  3 윤보선    상황을      
-##  4 윤보선    시찰차      
-##  5 윤보선    십오일      
-##  6 윤보선    상오        
-##  7 윤보선    구시        
-##  8 윤보선    삼십분      
-##  9 윤보선    특별기편으로
-## 10 윤보선    대구에      
-## # ... with 90 more rows
+## # A tibble: 483 x 2
+##    president word          
+##    &lt;chr&gt;     &lt;chr&gt;         
+##  1 윤보선    제            
+##  2 윤보선    2             
+##  3 윤보선    공화국의      
+##  4 윤보선    초대대통령으로
+##  5 윤보선    영예의        
+##  6 윤보선    당선을        
+##  7 윤보선    얻은          
+##  8 윤보선    어제          
+##  9 윤보선    나의          
+## 10 윤보선    감격은        
+## # ... with 473 more rows
 ```
 
 ---
@@ -504,24 +533,27 @@ get_speech(tar) %&gt;%
   # 대통령 컬럼과 연설문 컬럼만 선택한 후
   select(president, content) %&gt;% 
   # 연설문 컬럼을 word 단위로 쪼갠 결과물을 word라는 컬럼으로 출력
-  unnest_tokens(word, content)
+  unnest_tokens(
+    input = content,
+    output = word
+    )
 ```
 
 ```
-## # A tibble: 100 x 2
-##    president word        
-##    &lt;chr&gt;     &lt;chr&gt;       
-##  1 윤보선    영남지방의  
-##  2 윤보선    한해        
-##  3 윤보선    상황을      
-##  4 윤보선    시찰차      
-##  5 윤보선    십오일      
-##  6 윤보선    상오        
-##  7 윤보선    구시        
-##  8 윤보선    삼십분      
-##  9 윤보선    특별기편으로
-## 10 윤보선    대구에      
-## # ... with 90 more rows
+## # A tibble: 483 x 2
+##    president word          
+##    &lt;chr&gt;     &lt;chr&gt;         
+##  1 윤보선    제            
+##  2 윤보선    2             
+##  3 윤보선    공화국의      
+##  4 윤보선    초대대통령으로
+##  5 윤보선    영예의        
+##  6 윤보선    당선을        
+##  7 윤보선    얻은          
+##  8 윤보선    어제          
+##  9 윤보선    나의          
+## 10 윤보선    감격은        
+## # ... with 473 more rows
 ```
 
 ---
@@ -547,6 +579,10 @@ class:
 
 &gt; 철수가 밥을 먹었다.
 
+
+```
+## Checking user defined dictionary!
+```
 
 ```
 ## $철수가
@@ -683,12 +719,13 @@ SimplePos09("롯데마트가 판매하고 있는 흑마늘 양념 치킨이 논�
 
 1. **김영삼** 대통령의 첫 국무회의 연설문을 띄어쓰기 단위로 자르면 총 몇 단어인가요?
 
-1. **노태우** 대통령의 취임사를 `RcppMeCab` 패키지로 형태소 분석한 결과를 출력하세요.
+1. **노태우** 대통령의 취임사를 `RcppMeCab` 패키지의 `pos()` 함수로 형태소 분석한 결과를 출력하세요.
 
 1. **김대중** 대통령의 취임사를 `KoNLP` 패키지의 `SimplePos09()` 함수로 형태소 분석한 결과를 출력하세요.
 
 ---
 class: title, center, middle
+
 ## 복습
 
 ---
@@ -699,18 +736,13 @@ class: title, center, middle
 ```r
 library(tidytext)
 library(dplyr)
-library(presidentSpeechKr)
+library(presidentSpeech)
 
-tar &lt;- 
-  spidx %&gt;% 
+spidx %&gt;% 
   filter(president == "이명박") %&gt;% 
-  arrange(date) %&gt;% 
-  select(link) %&gt;% 
-  top_n(1)
-```
-
-```
-## Selecting by link
+  filter(grepl("취임사", title)) %&gt;% 
+  pull(link) -&gt; 
+  tar
 ```
 
 ---
@@ -741,24 +773,27 @@ get_speech(tar, paragraph = T) %&gt;%
   # 문단 컬럼과 연설문 컬럼만 선택한 후
   select(paragraph, content) %&gt;% 
   # 연설문 컬럼을 word 단위로 쪼갠 결과물을 word라는 컬럼으로 출력
-  unnest_tokens(word, content)
+  unnest_tokens(
+    input = content,
+    output = word
+    )
 ```
 
 ```
-## # A tibble: 708 x 2
-##    paragraph word        
-##        &lt;int&gt; &lt;chr&gt;       
-##  1         1 안녕하십니까
-##  2         1 대통령입니다
-##  3         2 2           
-##  4         2 년          
-##  5         2 전          
-##  6         2 오늘        
-##  7         2 1           
-##  8         2 월          
-##  9         2 21          
-## 10         2 일은        
-## # ... with 698 more rows
+## # A tibble: 2,019 x 2
+##    paragraph word    
+##        &lt;int&gt; &lt;chr&gt;   
+##  1         1 존경하는
+##  2         1 국민    
+##  3         1 여러분  
+##  4         2 700     
+##  5         2 만      
+##  6         2 해외동포
+##  7         2 여러분  
+##  8         3 이      
+##  9         3 자리에  
+## 10         3 참석하신
+## # ... with 2,009 more rows
 ```
 
 ---
@@ -789,20 +824,34 @@ class:
 
 
 ```r
-library(RcppMeCab)
-pos("한글 텍스트를 분석하기 위해서는 형태소 분석기가 필수다.")
+library(KoNLP)
+SimplePos09("한글 텍스트를 분석하기 위해서는 형태소 분석기가 필수다.")
 ```
 
 ```
-## $`&lt;c7&gt;&lt;U+0471&gt;&lt;db&gt; &lt;c5&gt;&lt;U+063D&gt;&lt;U+00BA&gt;&lt;U+01AE&gt;&lt;U+00B8&gt;&lt;U+00A6&gt; &lt;U+00BA&gt;м&lt;U+00AE&gt;&lt;c7&gt;&lt;U+03F1&gt;&lt;e2&gt; &lt;U+0027&gt;&lt;c7&gt;&lt;U+063C&gt;&lt;U+00AD&gt;&lt;U+00B4&gt;&lt;c2&gt; &lt;c7&gt;&lt;fc&gt;&lt;c5&gt;¼&lt;d2&gt; &lt;U+00BA&gt;м&lt;U+00AE&gt;&lt;U+00B1&gt;&lt;U+2C21&gt; &lt;c7&gt;&lt;U+02BC&gt;&lt;f6&gt;&lt;U+00B4&gt;&lt;d9&gt;.`
-##  [1] "&lt;c7&gt;&lt;d1&gt;/SL"         "&lt;U+00B1&gt;&lt;db&gt; /SY"    "&lt;c5&gt;&lt;d8&gt;/SL"        
-##  [4] "&lt;U+00BD&gt;&lt;U+00BA&gt;/SY" "&lt;U+01AE&gt;/SL"         "&lt;U+00B8&gt;&lt;U+00A6&gt;/SY"
-##  [7] "&lt;U+00BA&gt;/SY"         "м/SL"               "&lt;U+00AE&gt;/SY"        
-## [10] "&lt;c7&gt;&lt;cf&gt;/SL"         "&lt;U+00B1&gt;/SY"         "&lt;e2&gt; &lt;c0&gt;/SY"       
-## [13] "&lt;U+00A7&gt;/SY"         "&lt;c7&gt;&lt;d8&gt;/SL"         "&lt;U+00BC&gt;&lt;U+00AD&gt;&lt;U+00B4&gt;&lt;c2&gt; /SY"
-## [16] "&lt;c7&gt;&lt;fc&gt;&lt;c5&gt;&lt;c2&gt;/SL" "&lt;U+00BC&gt;/SY"         "&lt;d2&gt; /SL"           
-## [19] "&lt;U+00BA&gt;/SY"         "м/SL"               "&lt;U+00AE&gt;&lt;U+00B1&gt;&lt;U+2C21&gt;/SY"
-## [22] "&lt;c7&gt;&lt;ca&gt;/SL"         "&lt;U+00BC&gt;&lt;f6&gt;&lt;U+00B4&gt;&lt;d9&gt;./SY"
+## $한글
+## [1] "한글/N"
+## 
+## $텍스트를
+## [1] "텍스트/N+를/J"
+## 
+## $분석하기
+## [1] "분석하기/N"
+## 
+## $위해서는
+## [1] "위하/P+어서/E+는/J"
+## 
+## $형태소
+## [1] "형태소/N"
+## 
+## $분석기가
+## [1] "분석기/N+가/J"
+## 
+## $필수다
+## [1] "피/P+ㄹ/E+수/N+이/J+다/E"
+## 
+## $.
+## [1] "./S"
 ```
 
 ---
@@ -816,8 +865,8 @@ class: title, center, middle
 ```{}
 unnest_tokens(
   tbl = 텍스트 데이터,      
-  output = 결과열의 이름,   
   input = 목표 텍스트 열,   
+  output = 결과열의 이름,   
   token = "word",         &lt;---- 여기에 형태소 분석 함수를 적용
   ...                     
   )
@@ -827,18 +876,20 @@ unnest_tokens(
 
 ## tidy 하게 형태소 분석하기
 
-RcppMeCab의 `pos()` 함수를 활용해서 형태소 단위로 쪼갠 데이터를 만듭니다.
+KoNLP의 `SimplePos09()` 함수를 활용해서 형태소 단위로 쪼갠 데이터를 만듭니다.
 
 .pull-left[
 ```r
-library(RcppMeCab)
+library(KoNLP)
 pos_res &lt;- 
 # 연설문 중 1개를 가져와서
   get_speech(tar, paragraph = T) %&gt;%
   # 문단 컬럼과 연설문 컬럼만 선택한 후
   select(paragraph, content) %&gt;% 
-  # 연설문 컬럼을 형태소 단위로 쪼개 pos라는 컬럼으로 출력
-  unnest_tokens(pos, content, token=pos) %&gt;% 
+  # 연설문 컬럼을 형태소 단위로 쪼개 
+  # pos라는 컬럼으로 출력
+  unnest_tokens(pos, content, 
+                token = SimplePos09) %&gt;% 
   # pos 결과물의 순서 보장을 위해 순서 값을 추가
   mutate(pos_order = 1:n())
 pos_res
@@ -847,20 +898,20 @@ pos_res
 .pull-right[
 
 ```
-## # A tibble: 1,380 x 3
+## # A tibble: 2,216 x 3
 ##    paragraph pos           pos_order
 ##        &lt;int&gt; &lt;chr&gt;             &lt;int&gt;
-##  1         1 안녕/nng              1
-##  2         1 하/xsv                2
-##  3         1 십니까/ep+ef          3
-##  4         1 ,/sc                  4
-##  5         1 대통령/nng            5
-##  6         1 입니다/vcp+ef         6
-##  7         1 !/sf                  7
-##  8         2  /sy                  8
-##  9         3 2/sn                  9
-## 10         3 년/nnbc              10
-## # ... with 1,370 more rows
+##  1         1 존경하/n+는/j         1
+##  2         1 국민/n                2
+##  3         1 여러분/n              3
+##  4         1 !/s                   4
+##  5         2 700/n+만/j            5
+##  6         2 해외동포/n            6
+##  7         2 여러분/n              7
+##  8         2 !/s                   8
+##  9         3 이/m                  9
+## 10         3 자리/n+에/j          10
+## # ... with 2,206 more rows
 ```
 ]
 
@@ -885,27 +936,28 @@ pos_res %&gt;%
   # 활용하여 명사만 추출
   filter(grepl("/n", pos)) %&gt;% 
   # 형태소 정보를 제거
-  mutate(pos_done = gsub("/.*$", "", pos)) -&gt; n_done
+  mutate(pos_done = gsub("/.*$", "", pos)) -&gt; 
+  n_done
 n_done
 ```
 ]
 .pull-right[
 
 ```
-## # A tibble: 509 x 4
-##    paragraph pos          pos_order pos_done
-##        &lt;int&gt; &lt;chr&gt;            &lt;int&gt; &lt;chr&gt;   
-##  1         1 안녕/nng             1 안녕    
-##  2         1 대통령/nng           5 대통령  
-##  3         3 년/nnbc             10 년      
-##  4         3 전/nng              11 전      
-##  5         3 월/nnbc             14 월      
-##  6         3 일/nnbc             16 일      
-##  7         3 소말리아/nnp        18 소말리아
-##  8         3 해적/nng            19 해적    
-##  9         3 소탕/nng            21 소탕    
-## 10         3 아덴만/nnp          23 아덴만  
-## # ... with 499 more rows
+## # A tibble: 5,939 x 4
+##    paragraph pos                   pos_order pos_done      
+##        &lt;int&gt; &lt;chr&gt;                     &lt;int&gt; &lt;chr&gt;         
+##  1         1 사회자(sbs/n                  1 사회자(sbs    
+##  2         1 논설위원/n                    2 논설위원      
+##  3         1 김형민/n+)/s                  3 김형민        
+##  4         1 여러분/n                      4 여러분        
+##  5         1 안녕하십니까/n+,/s            5 안녕하십니까  
+##  6         1 ‘대통령과/n+의/j              6 ‘대통령과     
+##  7         1 원탁/n                        7 원탁          
+##  8         1 대화/n                        8 대화          
+##  9         1 생각하십니까,’/n+의/j        10 생각하십니까,’
+## 10         1 사회/n+를/j                  11 사회          
+## # ... with 5,929 more rows
 ```
 ]
 
@@ -917,42 +969,37 @@ n_done
 
 .pull-left[
 ```r
-vv_done &lt;- 
-  pos_res %&gt;%
-  filter(grepl("/vv", pos)) %&gt;% 
-  mutate(pos_done = gsub("/.*$", "다", pos))
+pos_res %&gt;%
+  filter(grepl("/p", pos)) %&gt;% 
+  mutate(pos_done = gsub("/.*$", "다", pos)) -&gt;
+  p_done
 
-va_done &lt;- 
-  pos_res %&gt;%
-  filter(grepl("/va", pos)) %&gt;% 
-  mutate(pos_done = gsub("/.*$", "다", pos))
-
-pos_done &lt;- 
-  bind_rows(n_done, vv_done, va_done) %&gt;% 
+bind_rows(n_done, p_done) %&gt;% 
   arrange(pos_order) %&gt;% 
   # nchar() 함수는 글자수를 출력
   filter(nchar(pos_done)&gt;1) %&gt;% 
-  select(paragraph, pos_done)
+  select(paragraph, pos_done) -&gt;
+  pos_done
 pos_done
 ```
 ]
 .pull-right[
 
 ```
-## # A tibble: 524 x 2
-##    paragraph pos_done
-##        &lt;int&gt; &lt;chr&gt;   
-##  1         1 안녕    
-##  2         1 대통령  
-##  3         3 소말리아
-##  4         3 해적    
-##  5         3 소탕    
-##  6         3 아덴만  
-##  7         3 작전    
-##  8         3 있다    
-##  9         3 오늘    
-## 10         3 북한    
-## # ... with 514 more rows
+## # A tibble: 5,122 x 2
+##    paragraph pos_done      
+##        &lt;int&gt; &lt;chr&gt;         
+##  1         1 사회자(sbs    
+##  2         1 논설위원      
+##  3         1 김형민        
+##  4         1 여러분        
+##  5         1 안녕하십니까  
+##  6         1 ‘대통령과     
+##  7         1 원탁          
+##  8         1 대화          
+##  9         1 생각하십니까,’
+## 10         1 사회          
+## # ... with 5,112 more rows
 ```
 ]
 
@@ -960,12 +1007,13 @@ pos_done
 
 ## 함께 사용한 함수 설명
 
-### `grepl()`
+### `grep()`, `grepl()`
 
-`grepl()` 함수는 글자 데이터내에 찾고자 하는 글자가 있는지를 T/F 결과로 돌려줌
+`grep()` 함수는 글자 데이터내에 찾고자 하는 글자가 있는 위치를 인덱스(숫자)로 알려줌    
+`grepl()` 함수는 결과를 T/F로 알려줌
 
 ```{}
-grepl(
+grep(
   pattern = 찾고자 하는 글자,  
   x = 글자 데이터,             
   fixed  = 정규식을 사용 여부, # T/F로 되어 있으며 FALSE가 기본값
@@ -1029,19 +1077,36 @@ nchar(
 
 
 ```r
-library(presidentSpeechKr)
+library(presidentSpeech)
+library(magrittr)
 library(tidyverse)
-tar &lt;- 
-  spidx %&gt;% 
+spidx %&gt;% 
   filter(president == "이명박") %&gt;% 
   arrange(date) %&gt;% 
-  top_n(10) %&gt;% 
-  mutate(spch = map(link, get_speech)) %&gt;% 
-  select(spch) %&gt;% 
-  unnest
+  top_n(10) %$% 
+  map_dfr(link, get_speech) -&gt;
+  tar
 tar
 ```
 
+
+
+---
+
+## RcppMeCab 으로 진행해보자
+
+```r
+library(presidentSpeech)
+library(magrittr)
+library(tidyverse)
+spidx %&gt;% 
+  filter(president == "이명박") %&gt;% 
+  arrange(date) %&gt;% 
+  top_n(10) %$% 
+  map_dfr(link, get_speech) -&gt;
+  tar
+tar
+```
 
 
 
@@ -1059,20 +1124,20 @@ pos_res %&gt;%
 ```
 
 ```
-## # A tibble: 30 x 4
+## # A tibble: 49 x 4
 ##    paragraph pos           pos_order pos_done
 ##        &lt;int&gt; &lt;chr&gt;             &lt;int&gt; &lt;chr&gt;   
-##  1         5 좋/va                90 좋다    
-##  2         5 좋/va               132 좋다    
-##  3         5 활기찬/va+etm       176 활기찬다
-##  4         7 큰/va+etm           200 큰다    
-##  5         7 작/va               221 작다    
-##  6         9 밝/va               288 밝다    
-##  7         9 큰/va+etm           294 큰다    
-##  8        13 높/va               338 높다    
-##  9        15 높/va               432 높다    
-## 10        17 좋/va               470 좋다    
-## # ... with 20 more rows
+##  1         9 눈물겹/va           453 눈물겹다
+##  2        10 수많/va             502 수많다  
+##  3        14 새로운/va+etm       623 새로운다
+##  4        16 아름답/va           798 아름답다
+##  5        16 없/va               825 없다    
+##  6        16 없/va               835 없다    
+##  7        17 활기차/va           870 활기차다
+##  8        18 힘차/va             959 힘차다  
+##  9        20 있/va              1003 있다    
+## 10        21 쉽/va              1082 쉽다    
+## # ... with 39 more rows
 ```
 
 ---
@@ -1134,12 +1199,12 @@ etm_done &lt;-
            map_chr(HangulAutomata)) %&gt;% 
   mutate(pos_done = paste0(done, "다"))
 
-pos_done&lt;- 
+pos_done &lt;- 
   bind_rows(sn_done,
           n_done,
           v_done,
           etm_done) %&gt;%
-  filter(nchar(pos_done)&gt;1) %&gt;% 
+  filter(nchar(pos_done) &gt; 1) %&gt;% 
   arrange(pos_order) %&gt;% 
   select(paragraph, pos_done)
 ```
@@ -1165,27 +1230,27 @@ pos_done&lt;-
 
 ```r
 library(dplyr)
-wn &lt;-
-  pos_done %&gt;% 
-  count(pos_done, sort=T)
+pos_done %&gt;% 
+  count(pos_done, sort = T) -&gt; 
+  wn
 wn
 ```
 
 ```
-## # A tibble: 308 x 2
+## # A tibble: 746 x 2
 ##    pos_done     n
 ##    &lt;chr&gt;    &lt;int&gt;
-##  1 우리        26
-##  2 국가        14
-##  3 나라        11
-##  4 세계        11
-##  5 있다        11
-##  6 국제         8
-##  7 높다         8
-##  8 브랜드       7
-##  9 사회         7
-## 10 되다         6
-## # ... with 298 more rows
+##  1 국민        30
+##  2 우리        27
+##  3 하다        25
+##  4 있다        24
+##  5 나라        22
+##  6 사회        22
+##  7 여러분      18
+##  8 세계        17
+##  9 대한민국    16
+## 10 정부        15
+## # ... with 736 more rows
 ```
 
 ---
@@ -1203,7 +1268,31 @@ wn %&gt;%
 .pull-right[
 
 
-![](index_files/figure-html/unnamed-chunk-31-1.png)&lt;!-- --&gt;
+
+```
+## Loading required package: RColorBrewer
+```
+
+```
+## Loading required package: sysfonts
+```
+
+```
+## Loading required package: showtextdb
+```
+
+```
+## 
+## Attaching package: 'showtextdb'
+```
+
+```
+## The following object is masked from 'package:extrafont':
+## 
+##     font_install
+```
+
+![](index_files/figure-html/unnamed-chunk-32-1.png)&lt;!-- --&gt;
 ]
 
 ---
@@ -1224,7 +1313,7 @@ wn %&gt;%
 ```
 ]
 .pull-right[
-![](index_files/figure-html/unnamed-chunk-32-1.png)&lt;!-- --&gt;
+![](index_files/figure-html/unnamed-chunk-33-1.png)&lt;!-- --&gt;
 ]
 
 ---
@@ -1271,7 +1360,7 @@ pw
 .pull-right[
 
 ```
-## # A tibble: 22,250 x 3
+## # A tibble: 22,303 x 3
 ##    item1  item2      n
 ##    &lt;chr&gt;  &lt;chr&gt;  &lt;dbl&gt;
 ##  1 국민   여러분    51
@@ -1284,7 +1373,7 @@ pw
 ##  8 사회   우리      18
 ##  9 우리   경제      17
 ## 10 생각   우리      15
-## # ... with 22,240 more rows
+## # ... with 22,293 more rows
 ```
 ]
 
@@ -1301,7 +1390,7 @@ pw %&gt;%
 ```
 
 ```
-## # A tibble: 713 x 3
+## # A tibble: 711 x 3
 ##    item1 item2        n
 ##    &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;
 ##  1 우리  나라        24
@@ -1314,7 +1403,7 @@ pw %&gt;%
 ##  8 우리  대한민국     9
 ##  9 우리  성장         9
 ## 10 우리  녹색         8
-## # ... with 703 more rows
+## # ... with 701 more rows
 ```
 ]
 .pull-right[
@@ -1323,7 +1412,7 @@ pw %&gt;%
 ## Selecting by n
 ```
 
-![](index_files/figure-html/unnamed-chunk-35-1.png)&lt;!-- --&gt;
+![](index_files/figure-html/unnamed-chunk-36-1.png)&lt;!-- --&gt;
 
 ]
 ---
@@ -1359,9 +1448,9 @@ pw_graph
 ```
 
 ```
-## IGRAPH 69baf5b DN-- 61 86 -- 
+## IGRAPH e43eb48 DN-- 60 85 -- 
 ## + attr: name (v/c), n (e/n)
-## + edges from 69baf5b (vertex names):
+## + edges from e43eb48 (vertex names):
 ##  [1] 국민  -&gt;여러분   우리  -&gt;나라     우리  -&gt;세계     국민  -&gt;사랑    
 ##  [5] 여러분-&gt;사랑     시장  -&gt;전통     국민  -&gt;우리     사회  -&gt;우리    
 ##  [9] 우리  -&gt;경제     생각  -&gt;우리     온누리-&gt;상품권   사회  -&gt;기업    
@@ -1401,7 +1490,7 @@ ggraph(pw_graph) +
 ## Using `nicely` as default layout
 ```
 
-![](index_files/figure-html/unnamed-chunk-37-1.png)&lt;!-- --&gt;
+![](index_files/figure-html/unnamed-chunk-38-1.png)&lt;!-- --&gt;
 ]
 ---
 
@@ -1444,7 +1533,7 @@ tfidf_tar %&gt;%
 .pull-right[
 
 ```
-## # A tibble: 3,428 x 6
+## # A tibble: 3,429 x 6
 ## # Groups:   id [10]
 ##       id pos              n     tf   idf tf_idf
 ##    &lt;dbl&gt; &lt;chr&gt;        &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
@@ -1458,7 +1547,7 @@ tfidf_tar %&gt;%
 ##  8     5 보험             8 0.0153  2.30 0.0352
 ##  9     1 북극             7 0.0138  2.30 0.0318
 ## 10     2 고향             4 0.0189  1.61 0.0304
-## # ... with 3,418 more rows
+## # ... with 3,419 more rows
 ```
 ]
 
@@ -1580,6 +1669,7 @@ class: title, center, middle
 [tidytextmining]: https://www.tidytextmining.com/
 [tidytext]: https://juliasilge.github.io/tidytext/
     </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
 "highlightStyle": "github",
@@ -1590,16 +1680,57 @@ class: title, center, middle
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
 });
-(function() {
-  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
   if (!r) return;
   s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
   d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
 })();</script>
 
 <script>
 (function() {
-  var i, text, code, codes = document.getElementsByTagName('code');
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
   for (i = 0; i < codes.length;) {
     code = codes[i];
     if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
@@ -1613,7 +1744,8 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     i++;
   }
-})();
+};
+slideshow._releaseMath(document);
 </script>
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

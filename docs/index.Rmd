@@ -20,6 +20,7 @@ output:
 options(htmltools.dir.version = FALSE)
 knitr::opts_chunk$set(cache = T, fig.height = 5)
 library(nycflights13)
+library(dplyr)
 ```
 
 class: center, middle, title-slide, 
@@ -33,7 +34,7 @@ class: center, middle, title-slide,
 
 ### 박찬엽
 
-### 2018년 09월 18일
+### 2018년 09월 18일.small[(update: 2019년 4월 17일)]
 ---
 class: center, middle, title-slide, 
 
@@ -93,7 +94,7 @@ flights 데이터에 파이프 연산자 사용예 1
 ```{r}
 flights %>%
   group_by(year,month,day) %>%
-  summarise(delay=mean(dep_delay, na.rm = TRUE))
+  summarise(delay = mean(dep_delay, na.rm = TRUE))
 ```
 ---
 class: 
@@ -102,11 +103,11 @@ class:
 group_by()는 filter()와도 함께 사용할 수 있음
 
 ```{r}
-popular_dests <- flights %>% 
+flights %>% 
   group_by(dest) %>% 
-  filter(n() > 365)
+  filter(n() > 365) -> 
+  popular_dests
 popular_dests
-
 ```
 
 ---
@@ -146,7 +147,7 @@ class:
 ]
 .pull-right[
 ```{r}
-if (!requireNamespace("tidyverse")){
+if (!requireNamespace("tidyverse")) {
   install.packages("tidyverse")}
 library(tidyverse)
 ```
@@ -230,12 +231,12 @@ class:
 * 여러 가지 token과 tm 패키지와의 호환 기능을 제공
 * 자세히 소개하는 [온라인 사이트(영문)][tidytextmining]
 
-  ```{r}
-  if(!requireNamespace("tidytext")){
-    install.packages("tidytext")
-  }
-  library(tidytext)
-  ```
+```{r}
+if (!requireNamespace("tidytext")) {
+  install.packages("tidytext")
+}
+library(tidytext)
+```
 
 ]
 .pull-right[
@@ -249,15 +250,15 @@ class:
 
 ## 데이터 패키지 소개
 
-### [presidentSpeechKr](https://forkonlp.github.io/presidentSpeechKr/)
+### [presidentSpeech](https://forkonlp.github.io/presidentSpeech/)
 
-대통령 기록 연구실의 대통령 연설문을 제공
+대통령 기록 연구실의 대통령 연설문을 제공([패키지 설명](https://forkonlp.github.io/presidentSpeech/))
 
 ```{r}
-if(!requireNamespace("presidentSpeechKr")){
-  remotes::install_github("forkonlp/presidentSpeechKr")
+if (!requireNamespace("presidentSpeech")) {
+  remotes::install_github("forkonlp/presidentSpeech")
 }
-library(presidentSpeechKr)
+library(presidentSpeech)
 ```
 
 ---
@@ -288,8 +289,9 @@ class:
 ## 연설 리스트 데이터
 
 ```{r}
+library(dplyr)
 data(spidx)
-str(spidx)
+glimpse(spidx)
 ```
 
 ---
@@ -297,7 +299,6 @@ str(spidx)
 ## 대통령 조건 연설 검색
 
 ```{r}
-library(dplyr)
 spidx %>% 
   filter(president == "윤보선")
 ```
@@ -307,11 +308,11 @@ class:
 
 ## 연설문 텍스트 가져오기
 ```{r}
-tar <- 
-  spidx %>% 
+spidx %>% 
   filter(president == "윤보선") %>% 
-  select(link) %>% 
-  top_n(1)
+  top_n(1, wt = desc(date)) %>% 
+  pull(link) -> 
+  tar
 get_speech(tar)
 ```
 
@@ -319,7 +320,7 @@ get_speech(tar)
 
 ## 연습문제
 
-1. presidentSpeechKr 패키지에서 검색할 수 있는 대통령은 총 몇명인가요?
+1. presidentSpeech 패키지에서 검색할 수 있는 대통령은 총 몇명인가요?
 
 1. **윤보선** 대통령과 **박정희** 대통령은 각각 몇 개의 연설문이 있나요?
 
@@ -340,7 +341,10 @@ class:
 ```{r}
 get_speech(tar) %>% 
   select(president, content) %>% 
-  unnest_tokens(word, content)
+  unnest_tokens(
+    input = content,
+    output = word
+    )
 ```
 
 ---
@@ -369,7 +373,10 @@ get_speech(tar) %>%
   # 대통령 컬럼과 연설문 컬럼만 선택한 후
   select(president, content) %>% 
   # 연설문 컬럼을 word 단위로 쪼갠 결과물을 word라는 컬럼으로 출력
-  unnest_tokens(word, content)
+  unnest_tokens(
+    input = content,
+    output = word
+    )
 ```
 
 ---
@@ -467,12 +474,13 @@ SimplePos09("롯데마트가 판매하고 있는 흑마늘 양념 치킨이 논�
 
 1. **김영삼** 대통령의 첫 국무회의 연설문을 띄어쓰기 단위로 자르면 총 몇 단어인가요?
 
-1. **노태우** 대통령의 취임사를 `RcppMeCab` 패키지로 형태소 분석한 결과를 출력하세요.
+1. **노태우** 대통령의 취임사를 `RcppMeCab` 패키지의 `pos()` 함수로 형태소 분석한 결과를 출력하세요.
 
 1. **김대중** 대통령의 취임사를 `KoNLP` 패키지의 `SimplePos09()` 함수로 형태소 분석한 결과를 출력하세요.
 
 ---
 class: title, center, middle
+
 ## 복습
 
 ---
@@ -482,14 +490,13 @@ class: title, center, middle
 ```{r}
 library(tidytext)
 library(dplyr)
-library(presidentSpeechKr)
+library(presidentSpeech)
 
-tar <- 
-  spidx %>% 
+spidx %>% 
   filter(president == "이명박") %>% 
-  arrange(date) %>% 
-  select(link) %>% 
-  top_n(1)
+  filter(grepl("취임사", title)) %>% 
+  pull(link) -> 
+  tar
 ```
 
 ---
@@ -519,7 +526,10 @@ get_speech(tar, paragraph = T) %>%
   # 문단 컬럼과 연설문 컬럼만 선택한 후
   select(paragraph, content) %>% 
   # 연설문 컬럼을 word 단위로 쪼갠 결과물을 word라는 컬럼으로 출력
-  unnest_tokens(word, content)
+  unnest_tokens(
+    input = content,
+    output = word
+    )
 ```
 
 ---
@@ -549,8 +559,8 @@ class:
 ## 형태소 분석기
 
 ```{r}
-library(RcppMeCab)
-pos("한글 텍스트를 분석하기 위해서는 형태소 분석기가 필수다.")
+library(KoNLP)
+SimplePos09("한글 텍스트를 분석하기 위해서는 형태소 분석기가 필수다.")
 ```
 
 ---
@@ -564,8 +574,8 @@ class: title, center, middle
 ```{}
 unnest_tokens(
   tbl = 텍스트 데이터,      
-  output = 결과열의 이름,   
   input = 목표 텍스트 열,   
+  output = 결과열의 이름,   
   token = "word",         <---- 여기에 형태소 분석 함수를 적용
   ...                     
   )
@@ -575,18 +585,20 @@ unnest_tokens(
 
 ## tidy 하게 형태소 분석하기
 
-RcppMeCab의 `pos()` 함수를 활용해서 형태소 단위로 쪼갠 데이터를 만듭니다.
+KoNLP의 `SimplePos09()` 함수를 활용해서 형태소 단위로 쪼갠 데이터를 만듭니다.
 
 .pull-left[
 ```r
-library(RcppMeCab)
+library(KoNLP)
 pos_res <- 
 # 연설문 중 1개를 가져와서
   get_speech(tar, paragraph = T) %>%
   # 문단 컬럼과 연설문 컬럼만 선택한 후
   select(paragraph, content) %>% 
-  # 연설문 컬럼을 형태소 단위로 쪼개 pos라는 컬럼으로 출력
-  unnest_tokens(pos, content, token=pos) %>% 
+  # 연설문 컬럼을 형태소 단위로 쪼개 
+  # pos라는 컬럼으로 출력
+  unnest_tokens(pos, content, 
+                token = SimplePos09) %>% 
   # pos 결과물의 순서 보장을 위해 순서 값을 추가
   mutate(pos_order = 1:n())
 pos_res
@@ -594,12 +606,12 @@ pos_res
 ]
 .pull-right[
 ```{r eval=T, echo=F}
-library(RcppMeCab)
-pos_res <- 
-  get_speech(tar, paragraph = T) %>%
+library(KoNLP)
+get_speech(tar, paragraph = T) %>%
   select(paragraph, content) %>% 
-  unnest_tokens(pos, content, token=pos) %>% 
-  mutate(pos_order = 1:n())
+  unnest_tokens(pos, content, token = SimplePos09) %>% 
+  mutate(pos_order = 1:n()) -> 
+  pos_res
 pos_res
 ```
 ]
@@ -625,7 +637,8 @@ pos_res %>%
   # 활용하여 명사만 추출
   filter(grepl("/n", pos)) %>% 
   # 형태소 정보를 제거
-  mutate(pos_done = gsub("/.*$", "", pos)) -> n_done
+  mutate(pos_done = gsub("/.*$", "", pos)) -> 
+  n_done
 n_done
 ```
 ]
@@ -635,7 +648,8 @@ pos_res %>%
   # 우선 `filter()` 와 `grepl()` 함수를 활용하여 명사만 추출
   filter(grepl("/n", pos)) %>% 
   # 형태소 정보를 제거
-  mutate(pos_done = gsub("/.*$", "", pos)) -> n_done
+  mutate(pos_done = gsub("/.*$", "", pos)) -> 
+  n_done
 n_done
 ```
 ]
@@ -648,42 +662,32 @@ n_done
 
 .pull-left[
 ```r
-vv_done <- 
-  pos_res %>%
-  filter(grepl("/vv", pos)) %>% 
-  mutate(pos_done = gsub("/.*$", "다", pos))
+pos_res %>%
+  filter(grepl("/p", pos)) %>% 
+  mutate(pos_done = gsub("/.*$", "다", pos)) ->
+  p_done
 
-va_done <- 
-  pos_res %>%
-  filter(grepl("/va", pos)) %>% 
-  mutate(pos_done = gsub("/.*$", "다", pos))
-
-pos_done <- 
-  bind_rows(n_done, vv_done, va_done) %>% 
+bind_rows(n_done, p_done) %>% 
   arrange(pos_order) %>% 
   # nchar() 함수는 글자수를 출력
   filter(nchar(pos_done)>1) %>% 
-  select(paragraph, pos_done)
+  select(paragraph, pos_done) ->
+  pos_done
 pos_done
 ```
 ]
 .pull-right[
 ```{r echo=F}
-vv_done <- 
-  pos_res %>%
-  filter(grepl("/vv", pos)) %>% 
-  mutate(pos_done = gsub("/.*$", "다", pos))
+pos_res %>%
+  filter(grepl("/p", pos)) %>% 
+  mutate(pos_done = gsub("/.*$", "다", pos)) ->
+  p_done
 
-va_done <- 
-  pos_res %>%
-  filter(grepl("/va", pos)) %>% 
-  mutate(pos_done = gsub("/.*$", "다", pos))
-
-pos_done <- 
-  bind_rows(n_done, vv_done, va_done) %>% 
+bind_rows(n_done, p_done) %>% 
   arrange(pos_order) %>% 
-  filter(nchar(pos_done)>1) %>% 
-  select(paragraph, pos_done)
+  filter(nchar(pos_done) > 1) %>% 
+  select(paragraph, pos_done) ->
+  pos_done
 pos_done
 ```
 ]
@@ -692,12 +696,13 @@ pos_done
 
 ## 함께 사용한 함수 설명
 
-### `grepl()`
+### `grep()`, `grepl()`
 
-`grepl()` 함수는 글자 데이터내에 찾고자 하는 글자가 있는지를 T/F 결과로 돌려줌
+`grep()` 함수는 글자 데이터내에 찾고자 하는 글자가 있는 위치를 인덱스(숫자)로 알려줌    
+`grepl()` 함수는 결과를 T/F로 알려줌
 
 ```{}
-grepl(
+grep(
   pattern = 찾고자 하는 글자,  
   x = 글자 데이터,             
   fixed  = 정규식을 사용 여부, # T/F로 되어 있으며 FALSE가 기본값
@@ -761,33 +766,60 @@ nchar(
 
 
 ```r
-library(presidentSpeechKr)
+library(presidentSpeech)
+library(magrittr)
 library(tidyverse)
-tar <- 
-  spidx %>% 
+spidx %>% 
   filter(president == "이명박") %>% 
   arrange(date) %>% 
-  top_n(10) %>% 
-  mutate(spch = map(link, get_speech)) %>% 
-  select(spch) %>% 
-  unnest
+  top_n(10) %$% 
+  map_dfr(link, get_speech) ->
+  tar
 tar
 ```
 
 ```{r include=FALSE}
-library(presidentSpeechKr)
+library(presidentSpeech)
+library(magrittr)
 library(tidyverse)
-tar <- 
-  spidx %>% 
+spidx %>% 
   filter(president == "이명박") %>% 
   arrange(date) %>% 
-  top_n(10) %>% 
-  mutate(spch = map(link, get_speech)) %>% 
-  select(spch) %>% 
-  unnest
+  top_n(10) %$% 
+  map_dfr(link, get_speech) ->
+  tar
 tar
 ```
 
+---
+
+## RcppMeCab 으로 진행해보자
+
+```r
+library(presidentSpeech)
+library(magrittr)
+library(tidyverse)
+spidx %>% 
+  filter(president == "이명박") %>% 
+  arrange(date) %>% 
+  top_n(10) %$% 
+  map_dfr(link, get_speech) ->
+  tar
+tar
+```
+
+```{r include=FALSE}
+library(RcppMeCab)
+spidx %>% 
+  filter(president == "이명박") %>% 
+  filter(grepl("취임사", title)) %>% 
+  pull(link) %>% 
+  get_speech(paragraph = T) %>%
+  select(paragraph, content) %>% 
+  unnest_tokens(pos, content, token = pos) %>% 
+  mutate(pos_order = 1:n()) -> 
+  pos_res
+```
 
 ---
 
@@ -857,12 +889,12 @@ etm_done <-
            map_chr(HangulAutomata)) %>% 
   mutate(pos_done = paste0(done, "다"))
 
-pos_done<- 
+pos_done <- 
   bind_rows(sn_done,
           n_done,
           v_done,
           etm_done) %>%
-  filter(nchar(pos_done)>1) %>% 
+  filter(nchar(pos_done) > 1) %>% 
   arrange(pos_order) %>% 
   select(paragraph, pos_done)
 ```
@@ -887,9 +919,9 @@ pos_done<-
 
 ```{r}
 library(dplyr)
-wn <-
-  pos_done %>% 
-  count(pos_done, sort=T)
+pos_done %>% 
+  count(pos_done, sort = T) -> 
+  wn
 wn
 ```
 
@@ -1209,7 +1241,7 @@ tfidf_tar %>%
 library(KnuSentiLexR)
 senti_tar <- 
   tar %>% 
-  unnest_tokens(sent, content, token="sentences") %>% 
+  unnest_tokens(sent, content, token = "sentences") %>% 
   filter(nchar(sent) < 20) %>% 
   select(sent)
 ```
@@ -1253,11 +1285,6 @@ library(tidyverse)
 class: title, center, middle
 
 ## 예시 프로젝트
-
----
-
-
-
 
 
 [1]: https://github.com/tidyverse/tidyverse
