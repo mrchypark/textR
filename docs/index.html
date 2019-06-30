@@ -19,7 +19,13 @@
     <textarea id="source">
 
 
+layout: true
 
+background-image: url(https://user-images.githubusercontent.com/6179259/60290723-50002480-9954-11e9-96fe-3fbd4d7d11d9.png)
+background-size: cover
+
+
+---
 
 class: center, middle, title-slide, 
 
@@ -32,7 +38,7 @@ class: center, middle, title-slide,
 
 ### 박찬엽
 
-### 2018년 09월 18일.small[(update: 2019년 4월 17일)]
+### 2018년 09월 18일.small[(update: 2019년 7월 1일)]
 ---
 class: center, middle, title-slide, 
 
@@ -42,50 +48,70 @@ class: center, middle, title-slide,
 
 ### [pdf 다운로드](https://github.com/mrchypark/textR/blob/master/docs/installation.pdf)
 
-.footnote[\* R 3.5.1 을 기준으로 작성하였습니다.]
+.footnote[\* R 3.6.0 을 기준으로 작성하였습니다.]
+
 
 ---
 class: center, middle, title-slide, 
+# 사전 지식
 
-## 사전 지식 1
-## 함수를 연결하는 파이프 연산자(%&gt;%)
+## tidyverse
+
+&lt;img src=https://github.com/tidyverse/tidyverse/raw/master/man/figures/logo.png align="center"&gt;
+
+---
+
+### tidyverse 패키지는
+
+1. RStudio가 개발, 관리하는 패키지    
+1. 공식 문서가 매우 잘 되어 있음    
+1. 사용자층이 두터워 영어로 검색하면 많은 질답을 찾을 수 있음    
+1. 커뮤니티 설명글도 매우 많음    
+1. 6개의 핵심 패키지 포함 23가지 패키지로 이루어진 메타 패키지    
+1. tidy data 라는 사상과 파이프 연산자로 대동단결    
+1. 사상에 영감을 받아 맞춰서 제작하는 개인 패키지가 많음(ex&gt; [tidyquant](https://github.com/business-science/tidyquant), [tidytext](https://github.com/juliasilge/tidytext) 등)
+
+
+```r
+if (!requireNamespace("tidyverse")) {
+  install.packages("tidyverse")}
+library(tidyverse)
+```
+
+---
+class: center, middle, title-slide, 
+### 파이프 연산자(%&gt;%)
 
 ![](https://raw.githubusercontent.com/mrchypark/dabrp_classnote3/master/docs/img/pipes.png)
 
 ---
-
-class: 
-## 파이프 연산자(%&gt;%)
+### 파이프 연산자(%&gt;%)
 
 함수를 중첩해서 사용할 일이 점점 빈번해 짐
 
-```{}
-plot(diff(log(sample(rnorm(10000,mean=10,sd=1),size=100,replace=FALSE))),col="red",type="l")
+
+```r
+plot(diff(log(sample(rnorm(10000, mean = 10, sd = 1), size = 100, 
+                     replace = FALSE))), col = "red", type = "l")
 ```
 
---
-class: 
-### %&gt;%를 사용하면 
-
-.pull-left[
+**%&gt;%를 사용하면**
 
 1. 생각의 순서대로 함수를 작성할 수 있음
 1. 중간 변수 저장을 할 필요가 없음
 1. 순서가 읽이 용이하여 기억하기 좋음
-]
-.pull-right[
-```{}
+
+
+```r
 rnorm(10000,mean=10,sd=1) %&gt;%
   sample(size=100,replace=FALSE) %&gt;%
   log %&gt;%
   diff %&gt;%
   plot(col="red",type="l")
 ```
-]
----
-class: 
 
-## 파이프 연산자(%&gt;%)
+---
+### 파이프 연산자(%&gt;%)
 
 flights 데이터에 파이프 연산자 사용예 1
 
@@ -114,9 +140,7 @@ flights %&gt;%
 ## # ... with 355 more rows
 ```
 ---
-class: 
-## 파이프 연산자(%&gt;%)
-
+### 파이프 연산자(%&gt;%)
 group_by()는 filter()와도 함께 사용할 수 있음
 
 
@@ -148,10 +172,8 @@ popular_dests
 ## #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
 ## #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
-
 ---
-class: 
-## 파이프 연산자(%&gt;%)
+### 파이프 연산자(%&gt;%)
 
 사용할 데이터부터 순서대로 함수를 작성할 수 있는 장점
 
@@ -180,67 +202,14 @@ popular_dests %&gt;%
 ## 10  2013     1     1 DTW          16  0.000116 
 ## # ... with 131,096 more rows
 ```
-
+ 
 ---
+ 
+### 단정한 데이터(tidy data)
 
-class: center, middle, title-slide, 
-
-## 사전 지식 2
-# tidy data + universe 
-
-[![](https://github.com/tidyverse/tidyverse/raw/master/man/figures/logo.png)][1]
-
----
-class: 
-## [tidyverse][1] 패키지는
-
-.pull-left[
-1. RStudio가 개발, 관리하는 패키지    
-1. 공식 문서가 매우 잘 되어 있음    
-1. 사용자층이 두터워 영어로 검색하면 많은 질답을 찾을 수 있음    
-1. 커뮤니티 설명글도 매우 많음    
-1. 6개의 핵심 패키지 포함 23가지 패키지로 이루어진 메타 패키지    
-1. tidy data 라는 사상과 파이프 연산자로 대동단결    
-1. 사상에 영감을 받아 맞춰서 제작하는 개인 패키지가 많음(ex&gt; [tidyquant](https://github.com/business-science/tidyquant), [tidytext](https://github.com/juliasilge/tidytext) 등)
-]
-.pull-right[
-
-```r
-if (!requireNamespace("tidyverse")) {
-  install.packages("tidyverse")}
-```
-
-```
-## Loading required namespace: tidyverse
-```
-
-```r
-library(tidyverse)
-```
-
-```
-## -- Attaching packages ----------------------------------- tidyverse 1.2.1 --
-```
-
-```
-## √ ggplot2 3.1.1     √ readr   1.3.1
-## √ tibble  2.1.1     √ purrr   0.3.2
-## √ tidyr   0.8.3     √ stringr 1.4.0
-## √ ggplot2 3.1.1     √ forcats 0.4.0
-```
-
-```
-## -- Conflicts -------------------------------------- tidyverse_conflicts() --
-## x dplyr::filter() masks stats::filter()
-## x dplyr::lag()    masks stats::lag()
-```
-]
----
-class: 
-## tidy data 란
-
-1. [Hadley Wickham](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html)  2. [고감자님의 블로그](http://freesearch.pe.kr/archives/3942)  3. [헬로우데이터과학](http://www.hellodatascience.com/?p=287)
-
+1. [Hadley Wickham](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html)     
+2. [고감자님의 블로그](http://freesearch.pe.kr/archives/3942)     
+3. [헬로우데이터과학](http://www.hellodatascience.com/?p=287)      
 
 1.1 Each variable forms a column.    
 1.2 각 변수는 개별의 열(column)으로 존재한다.    
@@ -254,22 +223,20 @@ class:
 3.2 각 테이블은 단 하나의 관측기준에 의해서 조직된 데이터를 저장한다.    
 3.3 각 테이블에는 단일 유형의 데이터가 들어간다.    
 
-.footnote[
-  \* 출처 : [금융데이터 분석을 위한 R 입문][2]
-]
+\* 출처 : [금융데이터 분석을 위한 R 입문][2]
+
 ---
-class: 
-## tidy data 란
+ 
+### 단정한 데이터(tidy data)
 
 ![](http://garrettgman.github.io/images/tidy-1.png)
 
-.footnote[
-  \* 출처 : [Garrett Grolemund의 Data Science with R 블로그](http://garrettgman.github.io/tidying/)
-]
+\* 출처 : [Garrett Grolemund의 Data Science with R 블로그](http://garrettgman.github.io/tidying/)
 
 ---
-class: 
-## long form vs wide form
+
+### long form과 wide form
+
 
 .pull-left[
 ### long form
@@ -288,62 +255,9 @@ class:
 
 ---
 
-class: 
+## 데이터 패키지(presidentSpeech) 소개
 
-## tidy .blue[text] data 란
-
-* a table with one-token-per-row    
-* 한 행(row)에 한 토큰(token)으로 테이블을 구성해야 한다.
-
---
-
-## 그럼 Token 이란?
-
-글자 중 의미를 가진 단위를 총칭.    
-tokenization은 가지고 있는 텍스트 자원을 token 단위로 나누는 것을 뜻함.     
-ex&gt; 자소(자음, 모음), 음소(글자), 형태소, 단어, n-gram 등
-
----
-class: 
-
-## [tidytext][tidytext] 패키지 소개
-
-.pull-left[
-* 한 행(row)에 한 토큰(token)으로 테이블을 구성하기 위한 패키지    
-* 파이프 연산자를 지원    
-* 여러 가지 token과 tm 패키지와의 호환 기능을 제공
-* 자세히 소개하는 [온라인 사이트(영문)][tidytextmining]
-
-
-```r
-if (!requireNamespace("tidytext")) {
-  install.packages("tidytext")
-}
-```
-
-```
-## Loading required namespace: tidytext
-```
-
-```r
-library(tidytext)
-```
-
-]
-.pull-right[
-  .center[
-    [&lt;img src=https://www.tidytextmining.com/images/cover.png width=60%&gt;](http://amzn.to/2tZkmxG)
-  ]
-]
-
----
-class: 
-
-## 데이터 패키지 소개
-
-### [presidentSpeech](https://forkonlp.github.io/presidentSpeech/)
-
-대통령 기록 연구실의 대통령 연설문을 제공([패키지 설명](https://forkonlp.github.io/presidentSpeech/))
+대통령 기록 연구실의 대통령 연설문을 제공([패키지 설명](https://forkonlp.github.io/presidentSpeechKr/))
 
 
 ```r
@@ -354,9 +268,10 @@ library(presidentSpeech)
 ```
 
 ---
-class: 
 
-## 대통령 조건 확인
+### 조건 확인 함수
+
+**대통령 조건 확인**
 
 ```r
 get_president()
@@ -366,10 +281,8 @@ get_president()
 ##  [1] "이승만" "윤보선" "박정희" "최규하" "전두환" "노태우" "김영삼"
 ##  [8] "김대중" "노무현" "이명박"
 ```
---
-class: 
 
-## 연설 분야 조건 확인
+**연설 분야 조건 확인**
 
 ```r
 get_field()
@@ -381,9 +294,7 @@ get_field()
 ##  [9] "환경"           "기타"
 ```
 ---
-class: 
-
-## 연설 유형 확인
+**연설 유형 확인**
 
 ```r
 get_event()
@@ -394,11 +305,7 @@ get_event()
 ##  [6] "환영사"      "치사"        "성명/담화문" "라디오연설"  "기타"
 ```
 
---
-class: 
-
-## 연설 리스트 데이터
-
+**연설 리스트 데이터**
 
 ```r
 library(dplyr)
@@ -419,7 +326,7 @@ glimpse(spidx)
 
 ---
 
-## 대통령 조건 연설 검색
+**데이터를 사용한 필터링 예시**
 
 
 ```r
@@ -437,9 +344,8 @@ spidx %&gt;%
 ```
 
 ---
-class: 
 
-## 연설문 텍스트 가져오기
+### 연설문 텍스트 가져오기
 
 ```r
 spidx %&gt;% 
@@ -459,7 +365,7 @@ get_speech(tar)
 
 ---
 
-## 연습문제
+### 연습문제
 
 1. presidentSpeech 패키지에서 검색할 수 있는 대통령은 총 몇명인가요?
 
@@ -468,71 +374,93 @@ get_speech(tar)
 1. `nchar()` 함수는 글자수를 세주는 함수입니다. **최규하** 대통령의 취임사는 총 몇 글자 인가요?
 
 ---
-class: center, middle, title-slide, 
 
-## 단어 단위로 잘라보자!
+# 단정하게 텍스트를 다루는 tidytext
+
+## tidy text data
+
+단정한 데이터 원칙을 아래 문장과 함께 적용한다.
+
+* a table with one-token-per-row    
+* 한 행(row)에 한 토큰(token)으로 테이블을 구성해야 한다.
+
+**Token 이란?**
+
+글자 중 의미를 가진 단위를 총칭.    
+tokenization은 가지고 있는 텍스트 자원을 token 단위로 나누는 것을 뜻함.     
+ex&gt; 자소(자음, 모음), 음소(글자), 형태소, 단어, n-gram 등
 
 ---
-class: 
 
-## `unnest_tokens()` 함수
+## tidytext 패키지
 
-기본값인 단어 단위(특수문자 제거, 띄어쓰기 기준) token으로 동작.
+.pull-left[
+* [tidytext][tidytext]
+* 한 행(row)에 한 토큰(token)으로 테이블을 구성하기 위한 패키지    
+* 파이프 연산자를 지원    
+* 여러 가지 token과 tm 패키지와의 호환 기능을 제공
+* 자세히 소개하는 [온라인 사이트(영문)][tidytextmining]
+* 한글 번역본이 출간됨
+
+**설치하기**
 
 
 ```r
-get_speech(tar) %&gt;% 
-  select(president, content) %&gt;% 
-  unnest_tokens(
-    input = content,
-    output = word
-    )
+if (!requireNamespace("tidytext")) {
+  install.packages("tidytext")
+}
+library(tidytext)
 ```
 
-```
-## # A tibble: 483 x 2
-##    president word          
-##    &lt;chr&gt;     &lt;chr&gt;         
-##  1 윤보선    제            
-##  2 윤보선    2             
-##  3 윤보선    공화국의      
-##  4 윤보선    초대대통령으로
-##  5 윤보선    영예의        
-##  6 윤보선    당선을        
-##  7 윤보선    얻은          
-##  8 윤보선    어제          
-##  9 윤보선    나의          
-## 10 윤보선    감격은        
-## # ... with 473 more rows
-```
-
+]
+.pull-right[
+&lt;img src=https://www.tidytextmining.com/images/cover.png width=70%&gt;
+]
 ---
-class: 
 
-## `unnest_tokens()` 함수 설명
+### token 단위 처리 `unnest_tokens()`
 
-텍스트 데이터를 token 단위로 풀어내는 함수
+기본값인 단어 단위(특수문자 제거, 띄어쓰기 기준) token으로 동작.
 
-```{}
+**함수 설명**
+
+`unnest_tokens()` 함수는 텍스트 데이터를 token 단위로 풀어내는 동작을 수행
+
+
+```r
 unnest_tokens(
-  tbl = 텍스트 데이터,      # 다루고자 하는 텍스트 데이터 객체
-  output = 결과열의 이름,   # token화의 결과가 작성될 열의 이름
-  input = 목표 텍스트 열,   # 텍스트 데이터 객체 내의 텍스트 열
-  token = "word",         # 기본값(띄어쓰기 단위)이 있어 생략 가능
-  ...                     # 기타 옵션들
+  # 다루고자 하는 텍스트 데이터 객체
+  tbl = 텍스트 데이터,      
+  # token화의 결과가 작성될 열의 이름
+  output = 결과열의 이름,   
+  # 텍스트 데이터 객체 내의 텍스트 열
+  input = 목표 텍스트 열,   
+  # 기본값(words 단위 = 띄어쓰기 단위)이 있어 생략 가능
+  token = "words",         
+  # 기타 옵션들
+  ...                     
   )
 ```
 
 ---
-class: 
 
+예시 코드
+
+
+```r
+tar
+```
+
+```
+## [1] "http://www.pa.go.kr/research/contents/speech/index.jsp?spMode=view&amp;catid=c_pa02062&amp;artid=1310437"
+```
 
 ```r
 # 연설문 중 1개를 가져와서
 get_speech(tar) %&gt;%
   # 대통령 컬럼과 연설문 컬럼만 선택한 후
   select(president, content) %&gt;% 
-  # 연설문 컬럼을 word 단위로 쪼갠 결과물을 word라는 컬럼으로 출력
+  # 연설문 컬럼을 띄어쓰기 단위로 쪼갠 결과물을 word라는 컬럼으로 출력
   unnest_tokens(
     input = content,
     output = word
@@ -558,44 +486,38 @@ get_speech(tar) %&gt;%
 
 ---
 
-## 띄어쓰기 단위로 나눴을 때 문제점
+### 연습문제
 
+1. **김영삼** 대통령의 첫 국무회의 연설문을 띄어쓰기 단위로 자르면 총 몇 단어인가요?
+
+---
 .pull-left[
-  .blue[**하다**]가 몇 가지 단어가 되는지    
-  &lt;https://namu.wiki/w/%ED%8C%8C%EC%9D%BC:M4nNWBR.png&gt;
+* 띄어쓰기 단위로 나눴을 때 문제점
+
+**하다**가 몇 가지 단어가 되는지    
 ]
-
+&lt;https://namu.wiki/w/파일:M4nNWBR.png&gt;
 .pull-right[
-
-  &lt;img src=https://user-images.githubusercontent.com/6179259/45862373-5d2c2980-bdac-11e8-9247-3ebde14583e8.png width=60%&gt;
+&lt;img src=https://user-images.githubusercontent.com/6179259/45862373-5d2c2980-bdac-11e8-9247-3ebde14583e8.png width=70%&gt;
 ]
 
 ---
-class: 
 
-## 한글의 특징 .yellow[형태소]
+# 형태소 분석
 
-형태소란 : 의미를 가지는 최소 단위
+## 한글의 특징 형태소
+
+형태소란 의미를 가지는 최소 단위
 
 &gt; 철수가 밥을 먹었다.
 
 
 ```
-## Checking user defined dictionary!
-```
-
-```
 ## $철수가
-##  [1] "철수/ncpa+가/jcc"          "철수/ncpa+가/jcs"         
-##  [3] "철수/ncpa+가/ncn"          "철수/ncpa+이/jp+가/ecc"   
-##  [5] "철수/ncn+가/jcc"           "철수/ncn+가/jcs"          
-##  [7] "철수/ncn+가/ncn"           "철수/ncn+이/jp+가/ecc"    
-##  [9] "철/xp+수가/ncn"            "철/xp+수/ncn+가/jcc"      
-## [11] "철/xp+수/ncn+가/jcs"       "철/xp+수/ncn+이/jp+가/ecc"
+## [1] "철수/ncpa+가/jcc" "철수/ncpa+가/jcs"
 ## 
 ## $밥을
-## [1] "밥/ncn+을/jco"  "밥/ncn+을/jcs"  "밥/ncpa+을/jco" "밥/ncpa+을/jcs"
-## [5] "밥/ncps+을/jco" "밥/ncps+을/jcs"
+## [1] "밥/ncn+을/jco"  "밥/ncpa+을/jco" "밥/ncps+을/jco"
 ## 
 ## $먹었다
 ## [1] "먹/pvg+었/ep+다/ef"
@@ -605,75 +527,55 @@ class:
 ```
 
 ---
-class: 
 
-.pull-left[![](https://github.com/haven-jeon/KoNLP/blob/master/etcs/figures/konlp_tags.png?raw=true)]
-.pull-right[
-  ### [크게 보기](https://github.com/haven-jeon/KoNLP/blob/master/etcs/figures/konlp_tags.png?raw=true)
-  ### [여러 체계의 형태소 품사](https://docs.google.com/spreadsheets/d/1OGAjUvalBuX-oZvZ_-9tEfYD2gQe7hTGsgUpiiBSXI8/edit#gid=0)
-]
+**형태소 분석기의 형태소 품사** / [전체 보기](https://github.com/haven-jeon/KoNLP/blob/master/etcs/figures/konlp_tags.png?raw=true) / [여러 체계의 형태소 품사](https://docs.google.com/spreadsheets/d/1OGAjUvalBuX-oZvZ_-9tEfYD2gQe7hTGsgUpiiBSXI8/edit#gid=0)
+
+![](https://github.com/haven-jeon/KoNLP/blob/master/etcs/figures/konlp_tags.png?raw=true)
 
 ---
-class: 
 
-## R의 대표적인 형태소 분석기
+## 형태소 분석기
+
+### R의 대표적인 형태소 분석기
 
 .pull-left[
-  ### RcppMeCab
-  1. 일본어 형태소 분석기인 mecab 기반
-  1. C++ 로 작성하여 속도가 매우 빠름
-  1. 일본어, 중국어 등도 사용 가능
-  1. 형태소 분석 함수를 제공
-  1. 띄어쓰기에 덜 민감함
+**RcppMeCab**
+
+1. 일본어 형태소 분석기인 mecab 기반    
+1. C++ 로 작성하여 속도가 매우 빠름    
+1. 일본어, 중국어 등도 사용 가능    
+1. 형태소 분석 함수를 제공    
+1. 띄어쓰기에 덜 민감함    
 ]
 .pull-right[
-  ### KoNLP
-  1. 가장 유명한 형태소 분석기
-  1. java로 작성된 한나눔 분석기 기반
-  1. 우리샘, NiaDIC 등 자체 사전
-  1. 텍스트 분석을 위한 기능들을 제공
-  1. 친절한 [설명서](https://github.com/haven-jeon/KoNLP/blob/master/etcs/KoNLP-API.md)
+**KoNLP**
+
+1. 가장 유명한 형태소 분석기    
+1. java로 작성된 한나눔 분석기 기반    
+1. 우리샘, NiaDIC 등 자체 사전    
+1. 텍스트 분석을 위한 기능들을 제공    
+1. 친절한 [설명서](https://github.com/haven-jeon/KoNLP/blob/master/etcs/KoNLP-API.md)
 ]
-
 ---
-class: center, middle, title-slide, 
 
-## RcppMeCab 설치 확인
-
----
-class: 
-
-## RcppMeCab 실행
+**RcppMeCab 설치 확인**
 
 
 ```r
 library(RcppMeCab)
-pos("롯데마트가 판매하고 있는 흑마늘 양념 치킨이 논란이 되고 있다.")
+pos(iconv("롯데마트가 판매하고 있는 흑마늘 양념 치킨이 논란이 되고 있다.", to = "utf8"))
 ```
 
 ```
-## $`&lt;U+00B7&gt;&lt;U+0535&gt;&lt;U+00A5&gt;&lt;U+00B8&gt;&lt;U+00B6&gt;&lt;U+01AE&gt;&lt;U+00B0&gt;&lt;U+00A1&gt; &lt;c6&gt;&lt;U+01F8&gt;&lt;c5&gt;&lt;c7&gt;&lt;U+03F0&gt;&lt;ed&gt; &lt;c0&gt;&lt;U+05B4&gt;&lt;c2&gt; &lt;c8&gt;渶&lt;U+00B4&gt;&lt;c3&gt; &lt;U+00BE&gt;&lt;e7&gt;&lt;U+00B3&gt;&lt;e4&gt; &lt;U+0121&gt;&lt;U+0172&gt;&lt;c0&gt;&lt;cc&gt; &lt;U+00B3&gt;&lt;ed&gt;&lt;U+00B6&gt;&lt;f5&gt;&lt;c0&gt;&lt;cc&gt; &lt;U+00B5&gt;&lt;U+01F0&gt;&lt;ed&gt; &lt;c0&gt;&lt;U+05B4&gt;&lt;d9&gt;.`
-##  [1] "&lt;U+00B7&gt;&lt;U+0535&gt;&lt;U+00A5&gt;&lt;U+00B8&gt;&lt;U+00B6&gt;/SY" "&lt;U+01AE&gt;/SL"            
-##  [3] "&lt;U+00B0&gt;&lt;U+00A1&gt;/SY"     "&lt;c6&gt;&lt;c7&gt;/SL"            
-##  [5] "&lt;U+00B8&gt;/SY"             "&lt;c5&gt;&lt;c7&gt;/SL"            
-##  [7] "&lt;U+03F0&gt;/SL"             "&lt;ed&gt; &lt;c0&gt;&lt;U+05B4&gt;&lt;c2&gt; /SY"
-##  [9] "&lt;c8&gt;&lt;e6&gt;/SL"             "&lt;U+00B8&gt;&lt;U+00B6&gt;&lt;U+00B4&gt;/SY"
-## [11] "&lt;c3&gt; /SL"                "&lt;U+00BE&gt;/SY"            
-## [13] "&lt;e7&gt;&lt;U+00B3&gt;&lt;e4&gt;/SH"     "&lt;U+0121&gt;&lt;U+0172&gt;/SL"    
-## [15] "&lt;c0&gt;&lt;cc&gt;/SY"             "&lt;U+00B3&gt;&lt;ed&gt;&lt;U+00B6&gt;&lt;f5&gt;&lt;c0&gt;&lt;cc&gt;/SY"
-## [17] "&lt;U+00B5&gt;/SY"             "&lt;U+01F0&gt;/SL"            
-## [19] "&lt;ed&gt; &lt;c0&gt;&lt;U+05B4&gt;&lt;d9&gt;./SY"
+## $`롯데마트가 판매하고 있는 흑마늘 양념 치킨이 논란이 되고 있다.`
+##  [1] "롯데마트/NNP" "가/JKS"       "판매/NNG"     "하/XSV"      
+##  [5] "고/EC"        "있/VX"        "는/ETM"       "흑/NNG"      
+##  [9] "마늘/NNG"     "양념/NNG"     "치킨/NNG"     "이/JKS"      
+## [13] "논란/NNG"     "이/JKS"       "되/VV"        "고/EC"       
+## [17] "있/VX"        "다/EF"        "./SF"
 ```
-
 ---
-class: center, middle, title-slide, 
-
-## KoNLP 설치 확인
-
----
-class: 
-
-## KoNLP 실행
+**KoNLP 설치 확인**
 
 
 ```r
@@ -683,7 +585,7 @@ SimplePos09("롯데마트가 판매하고 있는 흑마늘 양념 치킨이 논�
 
 ```
 ## $롯데마트가
-## [1] "롯데마트/N+가/J"
+## [1] "롯데마트가/N"
 ## 
 ## $판매하고
 ## [1] "판매/N+하고/J"
@@ -712,25 +614,18 @@ SimplePos09("롯데마트가 판매하고 있는 흑마늘 양념 치킨이 논�
 ## $.
 ## [1] "./S"
 ```
-
 ---
-
-## 연습문제
-
-1. **김영삼** 대통령의 첫 국무회의 연설문을 띄어쓰기 단위로 자르면 총 몇 단어인가요?
+### 생각해보기
 
 1. **노태우** 대통령의 취임사를 `RcppMeCab` 패키지의 `pos()` 함수로 형태소 분석한 결과를 출력하세요.
 
 1. **김대중** 대통령의 취임사를 `KoNLP` 패키지의 `SimplePos09()` 함수로 형태소 분석한 결과를 출력하세요.
 
 ---
-class: title, center, middle
 
-## 복습
+### 형태소로 token화
 
----
-
-## 준비
+#### 데이터 준비
 
 
 ```r
@@ -746,25 +641,8 @@ spidx %&gt;%
 ```
 
 ---
-class: 
 
-## `unnest_tokens()` 함수 설명
-
-텍스트 데이터를 token 단위로 풀어내는 함수
-
-```{}
-unnest_tokens(
-  tbl = 텍스트 데이터,      # 다루고자 하는 텍스트 데이터 객체
-  output = 결과열의 이름,   # token화의 결과가 작성될 열의 이름
-  input = 목표 텍스트 열,   # 텍스트 데이터 객체 내의 텍스트 열
-  token = "word",           # 기본값(띄어쓰기 단위)이 있어 생략 가능
-  ...                       # 기타 옵션들
-  )
-```
-
----
-
-## 연설문 가져와서 word(띄어쓰기) 단위로 나누기
+연설문 가져와서 word(띄어쓰기) 단위로 나누기
 
 
 ```r
@@ -797,261 +675,188 @@ get_speech(tar, paragraph = T) %&gt;%
 ```
 
 ---
-class: 
 
-## R의 대표적인 형태소 분석기
-
-.pull-left[
-  ### RcppMeCab
-  1. 일본어 형태소 분석기인 mecab 기반
-  1. C++ 로 작성하여 속도가 매우 빠름
-  1. 일본어, 중국어 등도 사용 가능
-  1. 형태소 분석 함수를 제공
-  1. 띄어쓰기에 덜 민감함
-]
-.pull-right[
-  ### KoNLP
-  1. 가장 유명한 형태소 분석기
-  1. java로 작성된 한나눔 분석기 기반
-  1. 우리샘, NiaDIC 등 자체 사전
-  1. 텍스트 분석을 위한 기능들을 제공
-  1. 친절한 [설명서](https://github.com/haven-jeon/KoNLP/blob/master/etcs/KoNLP-API.md)
-]
-
----
-
-## 형태소 분석기
+형태소 분석기와 함께 사용하기
 
 
 ```r
-library(KoNLP)
-SimplePos09("한글 텍스트를 분석하기 위해서는 형태소 분석기가 필수다.")
-```
-
-```
-## $한글
-## [1] "한글/N"
-## 
-## $텍스트를
-## [1] "텍스트/N+를/J"
-## 
-## $분석하기
-## [1] "분석하기/N"
-## 
-## $위해서는
-## [1] "위하/P+어서/E+는/J"
-## 
-## $형태소
-## [1] "형태소/N"
-## 
-## $분석기가
-## [1] "분석기/N+가/J"
-## 
-## $필수다
-## [1] "피/P+ㄹ/E+수/N+이/J+다/E"
-## 
-## $.
-## [1] "./S"
-```
-
----
-class: title, center, middle
-## 시작
-
----
-
-## 형태소 분석기와 함께 사용하기
-
-```{}
 unnest_tokens(
   tbl = 텍스트 데이터,      
   input = 목표 텍스트 열,   
   output = 결과열의 이름,   
-  token = "word",         &lt;---- 여기에 형태소 분석 함수를 적용
+  token = "words",       &lt;- 여기에 형태소 분석 함수를 적용
   ...                     
   )
 ```
 
 ---
 
-## tidy 하게 형태소 분석하기
-
 KoNLP의 `SimplePos09()` 함수를 활용해서 형태소 단위로 쪼갠 데이터를 만듭니다.
 
-.pull-left[
+
 ```r
 library(KoNLP)
-pos_res &lt;- 
 # 연설문 중 1개를 가져와서
-  get_speech(tar, paragraph = T) %&gt;%
+get_speech(tar, paragraph = T) %&gt;%
   # 문단 컬럼과 연설문 컬럼만 선택한 후
   select(paragraph, content) %&gt;% 
   # 연설문 컬럼을 형태소 단위로 쪼개 
   # pos라는 컬럼으로 출력
-  unnest_tokens(pos, content, 
-                token = SimplePos09) %&gt;% 
+  unnest_tokens(pos, content, token = SimplePos09) %&gt;% 
   # pos 결과물의 순서 보장을 위해 순서 값을 추가
-  mutate(pos_order = 1:n())
+  mutate(pos_order = 1:n()) -&gt; 
+  pos_res
 pos_res
 ```
-]
-.pull-right[
 
 ```
 ## # A tibble: 2,216 x 3
-##    paragraph pos           pos_order
-##        &lt;int&gt; &lt;chr&gt;             &lt;int&gt;
-##  1         1 존경하/n+는/j         1
-##  2         1 국민/n                2
-##  3         1 여러분/n              3
-##  4         1 !/s                   4
-##  5         2 700/n+만/j            5
-##  6         2 해외동포/n            6
-##  7         2 여러분/n              7
-##  8         2 !/s                   8
-##  9         3 이/m                  9
-## 10         3 자리/n+에/j          10
+##    paragraph pos              pos_order
+##        &lt;int&gt; &lt;chr&gt;                &lt;int&gt;
+##  1         1 존경/n+하/x+는/e         1
+##  2         1 국민/n                   2
+##  3         1 여러분/n                 3
+##  4         1 !/s                      4
+##  5         2 700/n+만/j               5
+##  6         2 해외동포/n               6
+##  7         2 여러분/n                 7
+##  8         2 !/s                      8
+##  9         3 이/m                     9
+## 10         3 자리/n+에/j             10
 ## # ... with 2,206 more rows
 ```
-]
 
 ---
 
-.pull-left[![](https://github.com/haven-jeon/KoNLP/blob/master/etcs/figures/konlp_tags.png?raw=true)]
-.pull-right[
-  ### [크게 보기](https://github.com/haven-jeon/KoNLP/blob/master/etcs/figures/konlp_tags.png?raw=true)
-  ### [여러 체계의 형태소 품사](https://docs.google.com/spreadsheets/d/1OGAjUvalBuX-oZvZ_-9tEfYD2gQe7hTGsgUpiiBSXI8/edit#gid=0)
-]
+### 불용어 제거
 
----
+#### 필요한 형태소 정보만 선택
 
-## 형태소 일부만 가져오기
+신뢰할 수 있는 stop word 사전 등이 없기 때문에, 형태소 분석 후 필요한 형태소만 활용.
 
-신뢰할 수 있는 stop word 사전 등이 없기 때문에, 형태소 분석 후 필요한 형태소만 활용
 
-.pull-left[
 ```r
+library(stringr)
 pos_res %&gt;%
-  # 우선 `filter()` 와 `grepl()` 함수
-  # 활용하여 명사만 추출
-  filter(grepl("/n", pos)) %&gt;% 
+  # 우선 `filter()` 와 `str_detect()` 함수를 활용하여 명사(n)만 추출
+  filter(str_detect(pos, "/n")) %&gt;% 
   # 형태소 정보를 제거
-  mutate(pos_done = gsub("/.*$", "", pos)) -&gt; 
+  mutate(pos_done = str_remove(pos, "/.*$")) -&gt; 
   n_done
+
 n_done
 ```
-]
-.pull-right[
 
 ```
-## # A tibble: 5,939 x 4
-##    paragraph pos                   pos_order pos_done      
-##        &lt;int&gt; &lt;chr&gt;                     &lt;int&gt; &lt;chr&gt;         
-##  1         1 사회자(sbs/n                  1 사회자(sbs    
-##  2         1 논설위원/n                    2 논설위원      
-##  3         1 김형민/n+)/s                  3 김형민        
-##  4         1 여러분/n                      4 여러분        
-##  5         1 안녕하십니까/n+,/s            5 안녕하십니까  
-##  6         1 ‘대통령과/n+의/j              6 ‘대통령과     
-##  7         1 원탁/n                        7 원탁          
-##  8         1 대화/n                        8 대화          
-##  9         1 생각하십니까,’/n+의/j        10 생각하십니까,’
-## 10         1 사회/n+를/j                  11 사회          
-## # ... with 5,929 more rows
+## # A tibble: 1,325 x 4
+##    paragraph pos                         pos_order pos_done                
+##        &lt;int&gt; &lt;chr&gt;                           &lt;int&gt; &lt;chr&gt;                   
+##  1         1 존경/n+하/x+는/e                    1 존경                    
+##  2         1 국민/n                              2 국민                    
+##  3         1 여러분/n                            3 여러분                  
+##  4         2 700/n+만/j                          5 700                     
+##  5         2 해외동포/n                          6 해외동포                
+##  6         2 여러분/n                            7 여러분                  
+##  7         3 자리/n+에/j                        10 자리                    
+##  8         3 참석/n+하/x+시ㄴ/e                 11 참석                    
+##  9         3 노무현ㆍ김대중ㆍ김영삼ㆍ전두환/n~        12 노무현ㆍ김대중ㆍ김영삼ㆍ전두환~
+## 10         3 전/n                               13 전                      
+## # ... with 1,315 more rows
 ```
-]
 
 ---
 
-## 명사, 형용사, 동사 가져오기
+#### 명사, 형용사, 동사 가져오기
 
-형태소 분석 후 한 글자는 전후 맥락 없이 의미를 파악하기 어렵기 때문에 제거
-
+명사는 n, 동사/형용사는 p로 표시. 형태소 분석 후 한 글자는 전후 맥락 없이 의미를 파악하기 어렵기 때문에 제거
 .pull-left[
+
 ```r
 pos_res %&gt;%
-  filter(grepl("/p", pos)) %&gt;% 
-  mutate(pos_done = gsub("/.*$", "다", pos)) -&gt;
+  filter(str_detect(pos, "/p")) %&gt;% 
+  mutate(
+    pos_done = 
+    str_replace_all(pos, "/.*$", "다")
+    ) -&gt;
   p_done
 
 bind_rows(n_done, p_done) %&gt;% 
   arrange(pos_order) %&gt;% 
-  # nchar() 함수는 글자수를 출력
-  filter(nchar(pos_done)&gt;1) %&gt;% 
+  filter(nchar(pos_done) &gt; 1) %&gt;% 
   select(paragraph, pos_done) -&gt;
   pos_done
+
 pos_done
 ```
 ]
 .pull-right[
 
 ```
-## # A tibble: 5,122 x 2
-##    paragraph pos_done      
-##        &lt;int&gt; &lt;chr&gt;         
-##  1         1 사회자(sbs    
-##  2         1 논설위원      
-##  3         1 김형민        
-##  4         1 여러분        
-##  5         1 안녕하십니까  
-##  6         1 ‘대통령과     
-##  7         1 원탁          
-##  8         1 대화          
-##  9         1 생각하십니까,’
-## 10         1 사회          
-## # ... with 5,112 more rows
+## # A tibble: 1,647 x 2
+##    paragraph pos_done                   
+##        &lt;int&gt; &lt;chr&gt;                      
+##  1         1 존경                       
+##  2         1 국민                       
+##  3         1 여러분                     
+##  4         2 700                        
+##  5         2 해외동포                   
+##  6         2 여러분                     
+##  7         3 자리                       
+##  8         3 참석                       
+##  9         3 노무현ㆍ김대중ㆍ김영삼ㆍ전두환
+## 10         3 대통령                     
+## # ... with 1,637 more rows
 ```
 ]
 
 ---
 
-## 함께 사용한 함수 설명
+#### 함께 사용한 함수 설명
 
-### `grep()`, `grepl()`
+**`str_detect()`**
 
-`grep()` 함수는 글자 데이터내에 찾고자 하는 글자가 있는 위치를 인덱스(숫자)로 알려줌    
-`grepl()` 함수는 결과를 T/F로 알려줌
+`str_detect()` 함수는 글자 데이터 내에 찾고자 하는 글자가 있는 지를 T/F로 알려줌
 
-```{}
-grep(
+
+```r
+str_detect(
+  string = 글자 데이터, 
   pattern = 찾고자 하는 글자,  
-  x = 글자 데이터,             
-  fixed  = 정규식을 사용 여부, # T/F로 되어 있으며 FALSE가 기본값
-  ...                     
+  negate = FALSE # 조건에 맞는 경우 or 그 반대의 결과를 받을 것을 지정            
   )
 ```
 
----
+**`str_replace_all()`**
 
-### `gsub()`
+`str_replace_all()` 함수는 찾고자 하는 글자를 원하는 글자로 바꿔줌.
 
-`gsub()` 함수는 찾고자 하는 글자를 원하는 글자로 바꿔줌
 
-```{}
-gsub(
+```r
+str_replace_all(
+  string = 글자 데이터,
   pattern = 찾고자 하는 글자,
-  replacement = 찾은 글자가 바뀌게 될 글자,
-  x = 글자 데이터,
-  fixed  = 정규식을 사용 여부, # T/F로 되어 있으며 FALSE가 기본값
-  ...                     
-  )
-```
-
-
-### `nchar()`
-
-`nchar()`는 글자 데이터를 받아서 글자수를 알려줌
-
-```{}
-nchar(
-  x = 세고자 하는 글자,
-  ...
+  replacement = 찾은 글자가 바뀌게 될 글자
   )
 ```
 
 ---
 
-## 최소한의 정규 표현식
+**`str_length()`**
+
+`str_length()`는 글자 데이터를 받아서 글자수를 알려줌
+
+
+```r
+str_count(
+  string = 세고자 하는 글자
+  )
+```
+
+---
+
+### 정규 표현식
+
+글자를 다루는데 유용한 기능을 제공
 
 - `^` : 이걸로 시작함    
 - `$` : 이걸로 끝남    
@@ -1060,170 +865,77 @@ nchar(
 - `+` : 앞에 있는 문자가 하나 이상    
 - `*` : 앞에 있는 문자가 없거나 하나 이상    
 
-참고 : https://mrchypark.github.io/dabrp_classnote3/class4
+참고 : &lt;https://mrchypark.github.io/dabrp_classnote3/class4&gt;
 
 ---
 
-## 연습문제
+### 연습문제
 
 1. 아래 코드로 이명박 대통령 연설문 중 10개 를 가져오세요.
-1. `grepl()` 함수를 사용해서 제목(title 컬럼)에 나눔이 있는 연설문을 찾으세요.
-1. `gsub()` 함수를 사용해서 제목(title 컬럼)에 `인터넷 연설` 글자를 없애보세요.
+1. `str_detect()` 함수를 사용해서 제목(title 컬럼)에 나눔이 있는 연설문을 찾으세요.
+1. `str_replace_all()` 함수를 사용해서 제목(title 컬럼)에 `인터넷 연설` 글자를 없애보세요.
 1. `mutate()` 함수를 사용해서 연설문id를 1~10까지 id 컬럼으로 추가하세요.
 1. `id`와 `content` 컬럼만 선택하세요.
 1. 형태소 분석을 하여 결과를 pos 컬럼으로 추가하세요.
-1. `grepl()` 함수를 사용해서 명사만 남겨보세요.
-1. `gsub()` 함수를 사용해서 POS 정보를 지우고 한글만 남기세요.
+1. `str_detect()` 함수를 사용해서 명사만 남겨보세요.
+1. `str_replace_all()` 함수를 사용해서 POS 정보를 지우고 한글만 남기세요.
 
 
 ```r
 library(presidentSpeech)
 library(magrittr)
 library(tidyverse)
+try_speech &lt;- insistently(get_speech)
 spidx %&gt;% 
   filter(president == "이명박") %&gt;% 
   arrange(date) %&gt;% 
   top_n(10) %$% 
-  map_dfr(link, get_speech) -&gt;
+  map_dfr(link, try_speech) -&gt;
   tar
+```
+
+```
+## Selecting by link
+```
+
+```r
 tar
 ```
 
-
-
----
-
-## RcppMeCab 으로 진행해보자
-
-```r
-library(presidentSpeech)
-library(magrittr)
-library(tidyverse)
-spidx %&gt;% 
-  filter(president == "이명박") %&gt;% 
-  arrange(date) %&gt;% 
-  top_n(10) %$% 
-  map_dfr(link, get_speech) -&gt;
-  tar
-tar
 ```
-
-
-
----
-
-## 앞선 코드의 문제점
-
-`활기찬다` 같은 글자가 발생
-
-
-```r
-pos_res %&gt;%
-  filter(grepl("/va", pos)) %&gt;% 
-  mutate(pos_done = gsub("/.*$", "다", pos))
-```
-
-```
-## # A tibble: 49 x 4
-##    paragraph pos           pos_order pos_done
-##        &lt;int&gt; &lt;chr&gt;             &lt;int&gt; &lt;chr&gt;   
-##  1         9 눈물겹/va           453 눈물겹다
-##  2        10 수많/va             502 수많다  
-##  3        14 새로운/va+etm       623 새로운다
-##  4        16 아름답/va           798 아름답다
-##  5        16 없/va               825 없다    
-##  6        16 없/va               835 없다    
-##  7        17 활기차/va           870 활기차다
-##  8        18 힘차/va             959 힘차다  
-##  9        20 있/va              1003 있다    
-## 10        21 쉽/va              1082 쉽다    
-## # ... with 39 more rows
+## # A tibble: 10 x 9
+##    title     date  president place field  event source paragraph content   
+##    &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;     
+##  1 제98차 라디오~ ""    이명박    국내  외교/통상~ 라디오연~ ""             1 안녕하십니까, 대~
+##  2 제99차 라디오~ ""    이명박    국내  기타   라디오연~ ""             1 안녕하십니까, 대~
+##  3 제100차 라디~ ""    이명박    국내  국정전반~ 라디오연~ ""             1 사회자(KBS 아~
+##  4 제101차 라디~ ""    이명박    국내  외교/통상~ 라디오연~ ""             1 안녕하십니까, 대~
+##  5 제102차 라디~ ""    이명박    국내  과학기술/~ 라디오연~ ""             1 안녕하십니까, 대~
+##  6 제103차 라디~ ""    이명박    국내  외교/통상~ 라디오연~ ""             1 안녕하십니까, 대~
+##  7 제104차 라디~ ""    이명박    국내  정치/사회~ 라디오연~ ""             1 안녕하십니까, 대~
+##  8 제105차 라디~ ""    이명박    국내  국정전반~ 라디오연~ ""             1 안녕하십니까, 대~
+##  9 제106차 라디~ ""    이명박    국내  국정전반~ 라디오연~ ""             1 안녕하십니까, 대~
+## 10 제107차 라디~ ""    이명박    국내  국정전반~ 라디오연~ ""             1 안녕하십니까, 대~
 ```
 
 ---
-
-## 문제를 해결해 보자
-
-추가 패키지가 필요함
-
-
-```r
-library(tidyr)
-library(purrr)
-library(KoNLP)
-```
+## 사전식 검출 예시
 
 ---
 
-### 문제를 해결해 보자
-
-.pull-left[
-
-```r
-n_done &lt;- 
-  pos_res %&gt;%
-  filter(grepl("/n", pos)) %&gt;% 
-  mutate(pos_done = gsub("/.*$", "", pos))
-
-v_done &lt;- 
-  pos_res %&gt;%
-  filter(grepl("/v(a|v)$", pos)) %&gt;% 
-  mutate(pos_done = gsub("/.*$", "다", pos))
-
-sn_done &lt;- 
-  pos_res %&gt;%
-  filter(grepl("/sn", pos)) %&gt;% 
-  mutate(pos_done = gsub("/.*$", "", pos))
-
-jamos &lt;-
-  function(text) {
-    paste0(
-      convertHangulStringToJamos(text)
-      , collapse = "")
-  }
-```
-]
-.pull-right[
-
-```r
-etm_done &lt;-
-  pos_res %&gt;%
-  filter(grepl("/v(a|v)\\+etm", pos)) %&gt;%
-  mutate(po = gsub("/.*$", "", pos)) %&gt;% 
-  mutate(post = po %&gt;% 
-           map(jamos)) %&gt;%
-  unnest %&gt;%
-  mutate(n = nchar(post)) %&gt;% 
-  mutate(posts = substr(post, 1, n - 1)) %&gt;%
-  mutate(done = posts %&gt;% 
-           map_chr(HangulAutomata)) %&gt;% 
-  mutate(pos_done = paste0(done, "다"))
-
-pos_done &lt;- 
-  bind_rows(sn_done,
-          n_done,
-          v_done,
-          etm_done) %&gt;%
-  filter(nchar(pos_done) &gt; 1) %&gt;% 
-  arrange(pos_order) %&gt;% 
-  select(paragraph, pos_done)
-```
-]
----
-
-## 단어 기반 지표
+# 텍스트 마이닝 지표
 
 1. 단어 출현 빈도 : 단순히 단어가 나타난 횟수를 세서 확인
 1. 동시 출현 빈도 : 기준 단어와 함께 나타난 단어들과 그 횟수를 세서 확인
 1. tf-idf : 전체 문서에서 나타난 횟수와 개별 문서에서 나타난 횟수로 만든 지표
---
-.center[
-![](https://user-images.githubusercontent.com/6179259/47669547-78c9f180-dbee-11e8-85e8-e01cb4cbe46d.png)
-]
+&lt;img src=https://user-images.githubusercontent.com/6179259/47669547-78c9f180-dbee-11e8-85e8-e01cb4cbe46d.png class=center width=100%&gt;
+1. 감성 분석 : 단어를 점수화한 감성사전을 사용하여 점수를 합산하여 만든 지표
 
 ---
 
-### 단어 출현 빈도
+## 단어 출현 빈도
+
+### 단어 출현 빈도 계산
 
 `count()` 함수는 데이터에서 총 몇 번 나왔는지 세어주는 집계함수. `group_by()`와 함께 사용하여 각 연설문별 출현 횟수 등을 구할 수 있음.
 
@@ -1237,91 +949,106 @@ wn
 ```
 
 ```
-## # A tibble: 746 x 2
+## # A tibble: 883 x 2
 ##    pos_done     n
 ##    &lt;chr&gt;    &lt;int&gt;
-##  1 국민        30
-##  2 우리        27
-##  3 하다        25
-##  4 있다        24
-##  5 나라        22
-##  6 사회        22
-##  7 여러분      18
-##  8 세계        17
-##  9 대한민국    16
-## 10 정부        15
-## # ... with 736 more rows
+##  1 하다        94
+##  2 있다        38
+##  3 국민        30
+##  4 우리        26
+##  5 여러분      18
+##  6 대한민국    17
+##  7 되다        16
+##  8 만들다      13
+##  9 가다        12
+## 10 사회        12
+## # ... with 873 more rows
 ```
 
 ---
 
-### 워드클라우드
+### 사용예 : 워드클라우드
 
-`count()` 함수로 단어와 그 빈도 테이블을 만들었다면, {wordcloud} 패키지를 사용해서 워드클라우드를 만들 수 있음
-.pull-left[
+`count()` 함수로 단어와 그 빈도 테이블을 만들었다면, `{wordcloud}` 패키지를 사용해서 워드클라우드를 만들 수 있음 `{showtext}` 패키지를 출력 결과물의 폰트를 설정하기 위한 패키지로 [Google Fonts](https://fonts.google.com/)에서 폰트 데이터를 받아와서 출력물에 사용할 수 있음.
+
+
 ```r
 library(wordcloud)
+library(showtext)
+font_add_google("Noto Sans", "notosans")
+showtext_auto()
 wn %&gt;% 
-  with(wordcloud(pos_done, n))
-```
-]
-.pull-right[
-
-
-
-```
-## Loading required package: RColorBrewer
-```
-
-```
-## Loading required package: sysfonts
-```
-
-```
-## Loading required package: showtextdb
-```
-
-```
-## 
-## Attaching package: 'showtextdb'
-```
-
-```
-## The following object is masked from 'package:extrafont':
-## 
-##     font_install
+  with(wordcloud(pos_done, n, family = "notosans"))
 ```
 
 ![](index_files/figure-html/unnamed-chunk-32-1.png)&lt;!-- --&gt;
-]
 
 ---
 
-### 빈도에 따른 색 입히기
+**빈도에 따른 색 입히기**
 
 &lt;https://github.com/EmilHvitfeldt/r-color-palettes&gt; 에 R에서 사용할 수 있는 색 테마 패키지들을 소개하고 있음.
-.pull-left[
+
+
 ```r
-## install.packages("Redmonder")
+# install.packages("Redmonder")
 library(Redmonder)
 pal = redmonder.pal(6, "sPBIRdPu")
 
 wn %&gt;% 
   with(wordcloud(pos_done, 
                  n, 
+                 family = "notosans",
                  colors = pal))
 ```
-]
-.pull-right[
+
 ![](index_files/figure-html/unnamed-chunk-33-1.png)&lt;!-- --&gt;
-]
 
 ---
 
 ### 연습문제
 
-* 49p 연습문제에서 사용한 `tar`를 이용해 진행해 주세요.    
-* `tar` 는 이명박 대통령의 라디오 연설문 10건 입니다.
+
+```r
+library(presidentSpeech)
+library(magrittr)
+library(tidyverse)
+try_speech &lt;- insistently(get_speech)
+spidx %&gt;% 
+  filter(president == "이명박") %&gt;% 
+  arrange(date) %&gt;% 
+  top_n(10) %$% 
+  map_dfr(link, try_speech) -&gt;
+  tar
+```
+
+```
+## Selecting by link
+```
+
+```r
+tar
+```
+
+```
+## # A tibble: 10 x 9
+##    title     date  president place field  event source paragraph content   
+##    &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;     
+##  1 제98차 라디오~ ""    이명박    국내  외교/통상~ 라디오연~ ""             1 안녕하십니까, 대~
+##  2 제99차 라디오~ ""    이명박    국내  기타   라디오연~ ""             1 안녕하십니까, 대~
+##  3 제100차 라디~ ""    이명박    국내  국정전반~ 라디오연~ ""             1 사회자(KBS 아~
+##  4 제101차 라디~ ""    이명박    국내  외교/통상~ 라디오연~ ""             1 안녕하십니까, 대~
+##  5 제102차 라디~ ""    이명박    국내  과학기술/~ 라디오연~ ""             1 안녕하십니까, 대~
+##  6 제103차 라디~ ""    이명박    국내  외교/통상~ 라디오연~ ""             1 안녕하십니까, 대~
+##  7 제104차 라디~ ""    이명박    국내  정치/사회~ 라디오연~ ""             1 안녕하십니까, 대~
+##  8 제105차 라디~ ""    이명박    국내  국정전반~ 라디오연~ ""             1 안녕하십니까, 대~
+##  9 제106차 라디~ ""    이명박    국내  국정전반~ 라디오연~ ""             1 안녕하십니까, 대~
+## 10 제107차 라디~ ""    이명박    국내  국정전반~ 라디오연~ ""             1 안녕하십니까, 대~
+```
+
+---
+
+### 연습문제
 
 1. `tar`의 `content` 컬럼을 `pos()` 함수로 형태소 분석을 진행해주세요.
 1. 그 중 명사만 남기고, 형태소 정보는 지워주세요. 한글자 명사도 지워주세요.
@@ -1333,56 +1060,36 @@ wn %&gt;%
 
 ---
 
-### 동시 출현 빈도
+## 동시 출현 빈도
+
+### 동시 출현 빈도 계산
 
 `pairwise_count()` 함수는 그룹 단위 내에서 단어가 동시에 출현한 횟수를 세어주는 함수. 보통 문장 단위를 그룹으로 처리
 
-.pull-left[
-```r
-## install.packages("widyr" ,dependencies = T)
-library(widyr)
-pw_tar &lt;- 
-  tar %&gt;% 
-  unnest_tokens(sent, content, token="sentences") %&gt;% 
-  mutate(id = as.numeric(1:n())) %&gt;% 
-  unnest_tokens(pos, sent, token=pos) %&gt;% 
-  select(id, pos) %&gt;% 
-  filter(grepl("/n|/v(v|a)", pos)) %&gt;% 
-  mutate(pos = gsub("/.*$","",pos)) %&gt;% 
-  filter(nchar(pos) &gt; 1)
-
-pw &lt;-
-  pw_tar %&gt;% 
-  pairwise_count(pos, id, sort = T, upper = F)
-pw
-```
-]
-.pull-right[
 
 ```
-## # A tibble: 22,303 x 3
+## # A tibble: 15,967 x 3
 ##    item1  item2      n
 ##    &lt;chr&gt;  &lt;chr&gt;  &lt;dbl&gt;
-##  1 국민   여러분    51
-##  2 우리   나라      24
-##  3 우리   세계      23
-##  4 국민   사랑      22
-##  5 여러분 사랑      22
-##  6 시장   전통      22
-##  7 국민   우리      20
-##  8 사회   우리      18
-##  9 우리   경제      17
-## 10 생각   우리      15
-## # ... with 22,293 more rows
+##  1 국민   여러분    50
+##  2 국민   사랑      22
+##  3 여러분 사랑      22
+##  4 국민   우리      19
+##  5 생각   우리      14
+##  6 우리   세계      14
+##  7 우리   나라      12
+##  8 안녕   대통령    10
+##  9 우리   사실      10
+## 10 우리   정부      10
+## # ... with 15,957 more rows
 ```
-]
 
 ---
 
 ### 기준 단어로 데이터 탐색
 
 `filter()` 함수로 기준 단어를 조회하면 함께 자주 나오는 단어와 그 빈도를 확인할 수 있음
-.pull-left[
+
 
 ```r
 pw %&gt;%
@@ -1390,37 +1097,88 @@ pw %&gt;%
 ```
 
 ```
-## # A tibble: 711 x 3
+## # A tibble: 648 x 3
 ##    item1 item2        n
 ##    &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;
-##  1 우리  나라        24
-##  2 우리  세계        23
-##  3 우리  경제        17
-##  4 우리  국가        12
-##  5 우리  개발        12
-##  6 우리  정부        11
-##  7 우리  미래         9
-##  8 우리  대한민국     9
-##  9 우리  성장         9
-## 10 우리  녹색         8
-## # ... with 701 more rows
+##  1 우리  세계        14
+##  2 우리  나라        12
+##  3 우리  사실        10
+##  4 우리  정부        10
+##  5 우리  이번         8
+##  6 우리  대한민국     8
+##  7 우리  경제         8
+##  8 우리  개발         7
+##  9 우리  모두         6
+## 10 우리  국가         6
+## # ... with 638 more rows
 ```
-]
-.pull-right[
+
+---
+
+
+```r
+library(forcats)
+library(ggplot2)
+# bar plot
+pw %&gt;%
+  filter(item1 %in% c("우리")) %&gt;% 
+  top_n(15) %&gt;% 
+  mutate(item2 = fct_reorder(item2, n, .desc = TRUE)) %&gt;% 
+  ggplot(aes(x = item2, y = n, fill = item1)) +
+  geom_bar(stat = "identity")
+```
 
 ```
 ## Selecting by n
 ```
 
-![](index_files/figure-html/unnamed-chunk-36-1.png)&lt;!-- --&gt;
+![](index_files/figure-html/unnamed-chunk-37-1.png)&lt;!-- --&gt;
 
-]
 ---
 
 ### 연습문제
 
-* 49p 연습문제에서 사용한 `tar`를 이용해 진행해 주세요.    
-* `tar` 는 이명박 대통령의 라디오 연설문 10건 입니다.
+
+```r
+library(presidentSpeech)
+library(magrittr)
+library(tidyverse)
+try_speech &lt;- insistently(get_speech)
+spidx %&gt;% 
+  filter(president == "이명박") %&gt;% 
+  arrange(date) %&gt;% 
+  top_n(10) %$% 
+  map_dfr(link, try_speech) -&gt;
+  tar
+```
+
+```
+## Selecting by link
+```
+
+```r
+tar
+```
+
+```
+## # A tibble: 10 x 9
+##    title     date  president place field  event source paragraph content   
+##    &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;     
+##  1 제98차 라디오~ ""    이명박    국내  외교/통상~ 라디오연~ ""             1 안녕하십니까, 대~
+##  2 제99차 라디오~ ""    이명박    국내  기타   라디오연~ ""             1 안녕하십니까, 대~
+##  3 제100차 라디~ ""    이명박    국내  국정전반~ 라디오연~ ""             1 사회자(KBS 아~
+##  4 제101차 라디~ ""    이명박    국내  외교/통상~ 라디오연~ ""             1 안녕하십니까, 대~
+##  5 제102차 라디~ ""    이명박    국내  과학기술/~ 라디오연~ ""             1 안녕하십니까, 대~
+##  6 제103차 라디~ ""    이명박    국내  외교/통상~ 라디오연~ ""             1 안녕하십니까, 대~
+##  7 제104차 라디~ ""    이명박    국내  정치/사회~ 라디오연~ ""             1 안녕하십니까, 대~
+##  8 제105차 라디~ ""    이명박    국내  국정전반~ 라디오연~ ""             1 안녕하십니까, 대~
+##  9 제106차 라디~ ""    이명박    국내  국정전반~ 라디오연~ ""             1 안녕하십니까, 대~
+## 10 제107차 라디~ ""    이명박    국내  국정전반~ 라디오연~ ""             1 안녕하십니까, 대~
+```
+
+---
+
+### 연습문제
 
 1. `tar`의 `content` 컬럼을 문장 단위로 나누어 주세요.
 1. 새롭게 문장별 id를 `id` 컬럼으로 추가해주세요.
@@ -1433,39 +1191,40 @@ pw %&gt;%
 1. 한 글자는 제거해 주세요.
 1. 동시 출현 빈도 테이블을 만들어 주세요. (컬럼이 item1, item2, n으로 구성됩니다.)
 1. `사랑`과 함께 출현한 단어들과 그 빈도를 확인하세요.
+
 ---
 
-### 네트워크 시각화
+### 사용예 : 네트워크 시각화
 
 
 ```r
 library(igraph)
-pw_graph &lt;- 
-  pw %&gt;% 
+pw %&gt;% 
   filter(n &gt; 5) %&gt;%
-  graph_from_data_frame()
+  graph_from_data_frame() -&gt;
+  pw_graph
 pw_graph 
 ```
 
 ```
-## IGRAPH e43eb48 DN-- 60 85 -- 
+## IGRAPH ce99911 DN-- 34 35 -- 
 ## + attr: name (v/c), n (e/n)
-## + edges from e43eb48 (vertex names):
-##  [1] 국민  -&gt;여러분   우리  -&gt;나라     우리  -&gt;세계     국민  -&gt;사랑    
-##  [5] 여러분-&gt;사랑     시장  -&gt;전통     국민  -&gt;우리     사회  -&gt;우리    
-##  [9] 우리  -&gt;경제     생각  -&gt;우리     온누리-&gt;상품권   사회  -&gt;기업    
-## [13] 사회  -&gt;생각     기후  -&gt;기금     라디오-&gt;인터넷   라디오-&gt;연설    
-## [17] 인터넷-&gt;연설     우리  -&gt;국가     성장  -&gt;녹색     녹색  -&gt;기후    
-## [21] 녹색  -&gt;기금     우리  -&gt;개발     위기  -&gt;경제     우리  -&gt;정부    
-## [25] 희망  -&gt;국민     안녕  -&gt;대통령   국민  -&gt;생각     시장  -&gt;상인    
-## [29] 시장  -&gt;상품권   경제  -&gt;세계     경제  -&gt;글로벌   때문  -&gt;우리    
+## + edges from ce99911 (vertex names):
+##  [1] 국민          -&gt;여러분   국민          -&gt;사랑    
+##  [3] 여러분        -&gt;사랑     국민          -&gt;우리    
+##  [5] 생각          -&gt;우리     우리          -&gt;세계    
+##  [7] 우리          -&gt;나라     안녕          -&gt;대통령  
+##  [9] 우리          -&gt;사실     우리          -&gt;정부    
+## [11] 때문          -&gt;우리     사회          -&gt;우리    
+## [13] 국민          -&gt;생각     미래          -&gt;우리    
+## [15] 우리          -&gt;이번     국민          -&gt;모두    
 ## + ... omitted several edges
 ```
+
 ---
 
-### 네트워크 시각화 코드
-
 네트워크 데이터는 node, edge로 구성됨
+
 
 ```r
 library(ggraph)
@@ -1481,82 +1240,97 @@ ggraph(pw_graph) +
   theme_void()
 ```
 
----
-
-### 네트워크 시각화
-.center[
-
 ```
 ## Using `nicely` as default layout
 ```
 
-![](index_files/figure-html/unnamed-chunk-38-1.png)&lt;!-- --&gt;
-]
+![](index_files/figure-html/unnamed-chunk-40-1.png)&lt;!-- --&gt;
+
 ---
 
-### tf-idf
+## tf-idf
 
 * tf : 전체 문서내의 단어 빈도    
 * idf : 단어를 가지는 문서 비율의 역수
 
-.center[
-![](https://user-images.githubusercontent.com/6179259/47669547-78c9f180-dbee-11e8-85e8-e01cb4cbe46d.png)
-]
+&lt;img src=https://user-images.githubusercontent.com/6179259/47669547-78c9f180-dbee-11e8-85e8-e01cb4cbe46d.png class=center width=100%&gt;
 
 ---
 
-### tf-idf
+### tf-idf 계산
 
 `bind_tf_idf()` 함수가 `tf`, `idf`, `tf-idf` 점수 모두를 제공하며 문서 단위의 정의가 매우 중요함. 보통 각 연설문, 개별 뉴스 본문 등을 하나의 문서로 정의함. `tf-idf` 가 높을 수록 각 문서에서 특별한 의미를 지니는 것으로 판단할 수 있음. 
 
 
-.pull-left[
 ```r
-library(tidytext)
-
-tfidf_tar &lt;- 
-  tar %&gt;% 
+tar %&gt;% 
   mutate(id = as.numeric(1:n())) %&gt;% 
-  unnest_tokens(pos, content, token=pos) %&gt;% 
+  unnest_tokens(pos, content, token = pos) %&gt;% 
   select(id, pos) %&gt;% 
   filter(grepl("/n|/v(v|a)", pos)) %&gt;% 
   mutate(pos = gsub("/.*$","",pos)) %&gt;% 
   filter(nchar(pos) &gt; 1) %&gt;% 
   group_by(id) %&gt;% 
-  count(pos)
+  count(pos) -&gt; 
+  tfidf_tar
 
 tfidf_tar %&gt;% 
   bind_tf_idf(pos, id, n) %&gt;% 
   arrange(desc(tf_idf))
 ```
-]
-.pull-right[
 
 ```
-## # A tibble: 3,429 x 6
-## # Groups:   id [10]
-##       id pos              n     tf   idf tf_idf
-##    &lt;dbl&gt; &lt;chr&gt;        &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
-##  1     2 추석             7 0.0330  1.61 0.0531
-##  2     8 선거             6 0.0208  2.30 0.0478
-##  3     1 그린란드         9 0.0178  2.30 0.0409
-##  4     6 아랍에미리트     9 0.0174  2.30 0.0401
-##  5     4 기금            12 0.0232  1.61 0.0373
-##  6     6 원전             8 0.0155  2.30 0.0356
-##  7    10 브랜드           7 0.0155  2.30 0.0356
-##  8     5 보험             8 0.0153  2.30 0.0352
-##  9     1 북극             7 0.0138  2.30 0.0318
-## 10     2 고향             4 0.0189  1.61 0.0304
-## # ... with 3,419 more rows
+## # A tibble: 0 x 6
+## # Groups:   id [0]
+## # ... with 6 variables: id &lt;dbl&gt;, pos &lt;chr&gt;, n &lt;int&gt;, tf &lt;dbl&gt;, idf &lt;dbl&gt;,
+## #   tf_idf &lt;dbl&gt;
 ```
-]
 
 ---
 
 ### 연습문제
 
-* 49p 연습문제에서 사용한 `tar`를 이용해 진행해 주세요.    
-* `tar` 는 이명박 대통령의 라디오 연설문 10건 입니다.
+
+```r
+library(presidentSpeech)
+library(magrittr)
+library(tidyverse)
+try_speech &lt;- insistently(get_speech)
+spidx %&gt;% 
+  filter(president == "이명박") %&gt;% 
+  arrange(date) %&gt;% 
+  top_n(10) %$% 
+  map_dfr(link, try_speech) -&gt;
+  tar
+```
+
+```
+## Selecting by link
+```
+
+```r
+tar
+```
+
+```
+## # A tibble: 10 x 9
+##    title     date  president place field  event source paragraph content   
+##    &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;     
+##  1 제98차 라디오~ ""    이명박    국내  외교/통상~ 라디오연~ ""             1 안녕하십니까, 대~
+##  2 제99차 라디오~ ""    이명박    국내  기타   라디오연~ ""             1 안녕하십니까, 대~
+##  3 제100차 라디~ ""    이명박    국내  국정전반~ 라디오연~ ""             1 사회자(KBS 아~
+##  4 제101차 라디~ ""    이명박    국내  외교/통상~ 라디오연~ ""             1 안녕하십니까, 대~
+##  5 제102차 라디~ ""    이명박    국내  과학기술/~ 라디오연~ ""             1 안녕하십니까, 대~
+##  6 제103차 라디~ ""    이명박    국내  외교/통상~ 라디오연~ ""             1 안녕하십니까, 대~
+##  7 제104차 라디~ ""    이명박    국내  정치/사회~ 라디오연~ ""             1 안녕하십니까, 대~
+##  8 제105차 라디~ ""    이명박    국내  국정전반~ 라디오연~ ""             1 안녕하십니까, 대~
+##  9 제106차 라디~ ""    이명박    국내  국정전반~ 라디오연~ ""             1 안녕하십니까, 대~
+## 10 제107차 라디~ ""    이명박    국내  국정전반~ 라디오연~ ""             1 안녕하십니까, 대~
+```
+
+---
+
+### 연습문제
 
 1. 새롭게 연설문별 id를 `id` 컬럼으로 추가해주세요.
 1. 문장별 id를 유지한 채로 `pos()` 함수를 사용하여 형태소 분석을 진행해 주세요.
@@ -1591,18 +1365,18 @@ tfidf_tar %&gt;%
 
 
 ```r
-## remotes::install_github("mrchypark/KnuSentiLexR")
+# remotes::install_github("mrchypark/KnuSentiLexR")
 library(KnuSentiLexR)
-senti_tar &lt;- 
-  tar %&gt;% 
-  unnest_tokens(sent, content, token="sentences") %&gt;% 
+tar %&gt;% 
+  unnest_tokens(sent, content, token = "sentences") %&gt;% 
   filter(nchar(sent) &lt; 20) %&gt;% 
-  select(sent)
+  select(sent) -&gt; 
+  senti_tar
 ```
 
 ---
 
-### 감성 분석
+### 감성 분석 점수
 
 - `senti_score()` 함수는 문장을 unigram 부터 3-gram 까지 작성한 후, 감성 사전에 점수를 합산하여 문장 점수를 계산    
 - `senti_magnitude()` 함수는 몇개의 ngram이 점수화되었는지를 계산    
@@ -1632,37 +1406,6 @@ senti_tar %&gt;%
 ## 10 그거 대단한 거죠.                     2     1
 ## # ... with 28 more rows
 ```
-
----
-class: title, center, middle
-
-## 파일 불러오기
-
----
-
-### 폴더 내의 파일들 한 번에 불러오기
-
-```
-library(fs)
-library(tidyverse)
-"data_dir" %&gt;% 
-  fs::dir_ls(regexp = "\\.csv$") %&gt;% 
-  purrr::map_dfr(readr::read_csv, .id = "source") %&gt;% 
-  dplyr::mutate(Month_Year = lubridate::myd(Month_Year, truncated = 1))
-```
-
-[출처](https://mrchypark.github.io/post/%EB%B2%88%EC%97%AD-%ED%8F%B4%EB%8D%94%EC%95%88%EC%9D%98-csv-%ED%8C%8C%EC%9D%BC%EB%93%A4%EC%9D%84-purrr-%EC%99%80-readr-%EC%9D%84-%EC%9D%B4%EC%9A%A9%ED%95%B4%EC%84%9C-%ED%95%9C%EB%B0%A9%EC%97%90-%EB%B6%88%EB%9F%AC%EC%98%A4%EA%B8%B0/)
-
----
-class: title, center, middle
-
-## 예시 프로젝트
-
----
-
-
-
-
 
 [1]: https://github.com/tidyverse/tidyverse
 [2]: https://mrchypark.github.io/kisa_finR

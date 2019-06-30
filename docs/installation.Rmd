@@ -16,10 +16,17 @@ output:
       ratio: '16:9'
 ---
 
+layout: true
+
+background-image: url(https://user-images.githubusercontent.com/6179259/60290723-50002480-9954-11e9-96fe-3fbd4d7d11d9.png)
+background-size: cover
+
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
 knitr::opts_chunk$set(cache = T, fig.height = 5)
 ```
+
+---
 
 class: center, middle, title-slide, 
 
@@ -32,4 +39,246 @@ class: center, middle, title-slide,
 
 ### 박찬엽
 
-### 2018년 10월 23일
+### 2018년 10월 23일.small[(update: 2019년 7월 1일)]
+
+---
+
+class: center, middle, title-slide, 
+## 텍스트 관련 R 패키지 설치 가이드
+
+### windows 사용자
+
+windows 10 64bit, windows 7 32bit에서 테스트하였습니다.
+
+---
+
+### jdk 8 설치
+
+[oracle 홈페이지](https://www.oracle.com/technetwork/java/javase/downloads/index.html) 방문
+
+![](https://user-images.githubusercontent.com/6179259/47305328-16a84400-d664-11e8-97f7-a190f7100d45.png)
+
+---
+
+### jdk 8 설치
+
+아래로 스크롤 하여 **Java SE 8uXXX** 에서 JDK의 다운로드 클릭
+
+![](https://user-images.githubusercontent.com/6179259/47307015-e1522500-d668-11e8-9c26-7b5f42864423.png)
+
+---
+
+### jdk 8 설치
+
+jdk 8 다운로드를 위한 화면
+
+![](https://user-images.githubusercontent.com/6179259/47307028-f038d780-d668-11e8-9deb-562fce2dd5ad.png)
+
+---
+
+### jdk 8 설치
+
+Java SE Devalopment Kit 8uXXX 위치에 **Accept License Agreement** 클릭
+
+![](https://user-images.githubusercontent.com/6179259/47307041-fcbd3000-d668-11e8-8a82-748de4837851.png)
+
+---
+
+### jdk 8 설치
+
+x64가 64bit, x86이 32bit를 의미하므로 컴퓨터의 bit에 맞는 버전을 다운로드
+
+![](https://user-images.githubusercontent.com/6179259/47307051-06df2e80-d669-11e8-8ffc-d17211494ab8.png)
+
+---
+
+### jdk 8 설치
+
+설치 파일을 실행 후 다른 설정없이 **Next**를 계속 클릭하여 설치를 진행
+
+![](https://user-images.githubusercontent.com/6179259/47307337-c16f3100-d669-11e8-8ee1-b9f11e36586a.png)
+
+---
+
+### KoNLP 패키지 설치 및 테스트
+
+KoNLP는 가장 유명한 형태소 분석기입니다.
+
+```{r}
+if (!requireNamespace("KoNLP")) {
+  install.packages("KoNLP", repos = "https://cloud.r-project.org")
+}
+library(KoNLP)
+
+test <- "한글 테스트 입니다."
+# 아래 결과가 나와야 합니다.
+extractNoun(test)
+```
+
+---
+
+### RcppMeCab 패키지 설치 및 테스트
+
+RcppMeCab은 빠른 형태소 분석기입니다.
+
+```{r}
+if (!requireNamespace("RcppMeCab")) {
+  install.packages("RcppMeCab", repos = "https://cloud.r-project.org")
+}
+if (!requireNamespace("RmecabKo")) {
+  install.packages("RmecabKo", repos = "https://cloud.r-project.org")
+}
+```
+
+---
+
+### RcppMeCab 패키지 설치 및 테스트
+
+```{r eval=F}
+# c:에 권한이 없다면 "d:/mecab"으로 설정
+RmecabKo::install_mecab("c:/mecab")
+```
+```{r}
+library(RcppMeCab)
+test <- "한글 테스트 입니다."
+# 아래 결과가 나와야 합니다.
+pos(test)
+```
+
+만약에 글자가 깨진다면 `iconv()` 함수를 사용해 보세요.
+
+```{r}
+library(RcppMeCab)
+test <- "한글 테스트 입니다."
+# iconv 함수는 인코딩을 변경하는 함수입니다.
+test <- iconv(test, to = "UTF-8")
+pos(test)
+```
+
+---
+class: center, middle, title-slide, 
+## macOS 사용자
+
+---
+
+### 터미널에서 설치해야 하는 도구들
+
+#### JDK8
+
+동영상 가이드를 참고하여 설치해주세요.
+
+<https://www.youtube.com/watch?v=v8xZWbIASc0>
+
+```{bash eval=F}
+java -version
+```
+
+버전이 1.8.XXXXX 로 표시되면 잘 설치된 것입니다.
+
+---
+
+### 터미널에서 설치해야 하는 도구들
+
+#### mecab-ko
+
+형태소 분석기를 설치합니다.    
+공식 문서를 참고하세요.    
+<https://bitbucket.org/eunjeon/mecab-ko-dic>
+
+맥의 터미널에서 아래 명령어를 수행합니다.
+
+```{bash eval=F}
+wget https://bitbucket.org/eunjeon/mecab-ko/downloads/mecab-0.996-ko-0.9.2.tar.gz
+tar zxfv mecab-0.996-ko-0.9.2.tar.gz
+cd mecab-0.996-ko-0.9.2
+./configure
+make
+make check
+# 아래 실행 후 컴퓨터 비밀번호 입력
+sudo make install
+```
+
+---
+
+### 터미널에서 설치해야 하는 도구들
+
+#### 3. mecab-ko-dic
+
+형태소 분석기의 사전을 설치합니다.    
+공식 문서를 참고하세요.    
+<https://bitbucket.org/eunjeon/mecab-ko-dic>
+
+맥의 터미널에서 아래 명령어를 수행합니다.
+
+```{bash eval=F}
+wget https://bitbucket.org/eunjeon/mecab-ko-dic/downloads/mecab-ko-dic-2.1.1-20180720.tar.gz
+tar zxfv mecab-ko-dic-2.1.1-20180720.tar.gz
+cd mecab-ko-dic-2.1.1-20180720
+./configure
+make
+make check
+# 아래 실행 후 컴퓨터 비밀번호 입력
+sudo make install
+```
+
+---
+
+### KoNLP 패키지 설치 및 테스트
+
+KoNLP는 가장 유명한 형태소 분석기입니다.
+
+```{r}
+if (!requireNamespace("KoNLP")) {
+  install.packages("KoNLP", repos = "https://cloud.r-project.org")
+}
+library(KoNLP)
+
+test <- "한글 테스트 입니다."
+extractNoun(test)
+```
+
+---
+
+### RcppMeCab 패키지 설치 및 테스트
+
+```{r}
+if (!requireNamespace("remotes")) {
+  install.packages("remotes", repos = "https://cloud.r-project.org")
+}
+if (!requireNamespace("RcppMeCab")) {
+  remotes::install_github("junhewk/RcppMeCab")
+}
+library(RcppMeCab)
+
+test <- "한글 테스트 입니다."
+pos(test)
+```
+
+만약에 글자가 깨진다면 `iconv()` 함수를 사용해 보세요.
+
+```{r}
+# iconv 함수는 인코딩을 변경하는 함수입니다.
+test <- iconv(test, to = "UTF-8")
+pos(test)
+```
+
+---
+
+## 공통 패키지 설치
+
+`remotes` 패키지는 패키지 인스톨을 위한 함수를 제공합니다. `tidytext` 패키지는 텍스트를 tidy하게 다룰 수 있게 해줍니다. `presidentSpeech` 패키지는 역대 대통령 연설문 텍스트를 사용할 수 있게 해주는 패키지입니다.
+
+```{r}
+if (!requireNamespace("remotes")) {
+  install.packages("remotes", repos = "https://cloud.r-project.org")
+}
+if (!requireNamespace("tidytext")) {
+  install.packages("tidytext", repos = "https://cloud.r-project.org")
+}
+if (!requireNamespace("presidentSpeech")) {
+  remotes::install_github("forkonlp/presidentSpeech")
+}
+
+library(tidytext)
+library(presidentSpeech)
+```
