@@ -443,7 +443,7 @@ library(presidentSpeech)
 
 spidx %>% 
   filter(president == "이명박") %>% 
-  filter(grepl("취임사", title)) %>% 
+  filter(str_detect(title, "취임사")) %>% 
   pull(link) -> 
   tar
 ```
@@ -645,9 +645,6 @@ tar
 ```
 
 ---
-## 사전식 검출 예시
-
----
 
 # 텍스트 마이닝 지표
 
@@ -754,8 +751,8 @@ tar %>%
   mutate(id = as.numeric(1:n())) %>% 
   unnest_tokens(pos, sent, token = SimplePos09) %>% 
   select(id, pos) %>% 
-  filter(grepl("/n|/v(v|a)", pos)) %>% 
-  mutate(pos = gsub("/.*$","",pos)) %>% 
+  filter(str_detect(pos, "/n|/v(v|a)")) %>% 
+  mutate(pos = str_remove_all(pos, "/.*$")) %>% 
   filter(nchar(pos) > 1) -> 
   pw_tar
 
@@ -877,8 +874,8 @@ tar %>%
   mutate(id = as.numeric(1:n())) %>% 
   unnest_tokens(pos, content, token = pos) %>% 
   select(id, pos) %>% 
-  filter(grepl("/n|/v(v|a)", pos)) %>% 
-  mutate(pos = gsub("/.*$","",pos)) %>% 
+  filter(str_detect(pos, "/n|/v(v|a)")) %>% 
+  mutate(pos = str_remove_all(pos, "/.*$")) %>% 
   filter(nchar(pos) > 1) %>% 
   group_by(id) %>% 
   count(pos) -> 

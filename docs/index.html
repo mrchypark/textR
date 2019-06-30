@@ -635,7 +635,7 @@ library(presidentSpeech)
 
 spidx %&gt;% 
   filter(president == "이명박") %&gt;% 
-  filter(grepl("취임사", title)) %&gt;% 
+  filter(str_detect(title, "취임사")) %&gt;% 
   pull(link) -&gt; 
   tar
 ```
@@ -917,9 +917,6 @@ tar
 ##  9 제106차 라디~ ""    이명박    국내  국정전반~ 라디오연~ ""             1 안녕하십니까, 대~
 ## 10 제107차 라디~ ""    이명박    국내  국정전반~ 라디오연~ ""             1 안녕하십니까, 대~
 ```
-
----
-## 사전식 검출 예시
 
 ---
 
@@ -1267,8 +1264,8 @@ tar %&gt;%
   mutate(id = as.numeric(1:n())) %&gt;% 
   unnest_tokens(pos, content, token = pos) %&gt;% 
   select(id, pos) %&gt;% 
-  filter(grepl("/n|/v(v|a)", pos)) %&gt;% 
-  mutate(pos = gsub("/.*$","",pos)) %&gt;% 
+  filter(str_detect(pos, "/n|/v(v|a)")) %&gt;% 
+  mutate(pos = str_remove_all(pos, "/.*$")) %&gt;% 
   filter(nchar(pos) &gt; 1) %&gt;% 
   group_by(id) %&gt;% 
   count(pos) -&gt; 
