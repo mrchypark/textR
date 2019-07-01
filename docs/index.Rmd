@@ -236,6 +236,7 @@ glimpse(spidx)
 **데이터를 사용한 필터링 예시**
 
 ```{r}
+library(dplyr)
 spidx %>% 
   filter(president == "윤보선")
 ```
@@ -244,6 +245,7 @@ spidx %>%
 
 ### 연설문 텍스트 가져오기
 ```{r}
+library(dplyr)
 spidx %>% 
   filter(president == "윤보선") %>% 
   top_n(1, wt = desc(date)) %>% 

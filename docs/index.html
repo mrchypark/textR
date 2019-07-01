@@ -330,6 +330,7 @@ glimpse(spidx)
 
 
 ```r
+library(dplyr)
 spidx %&gt;% 
   filter(president == "윤보선")
 ```
@@ -348,6 +349,7 @@ spidx %&gt;%
 ### 연설문 텍스트 가져오기
 
 ```r
+library(dplyr)
 spidx %&gt;% 
   filter(president == "윤보선") %&gt;% 
   top_n(1, wt = desc(date)) %&gt;% 
