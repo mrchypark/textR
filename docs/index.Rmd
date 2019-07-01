@@ -769,6 +769,22 @@ pw
 
 ---
 
+### 패키지 설치 및 함수 사용법
+
+
+```{r eval=F}
+install.packages("widyr" ,dependencies = T)
+
+pairwise_count(
+  tbl = 대상 데이터,
+  item = 갯수를 새어야 할 컬럼,
+  feature = 함께 출현했다고 판단할 단위 그룹,
+  sort = 출현 횟수 단위로 정렬할지
+)
+```
+
+---
+
 ### 기준 단어로 데이터 탐색
 
 `filter()` 함수로 기준 단어를 조회하면 함께 자주 나오는 단어와 그 빈도를 확인할 수 있음
