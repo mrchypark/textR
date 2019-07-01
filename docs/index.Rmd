@@ -746,7 +746,28 @@ tar
 ### 동시 출현 빈도 계산
 
 `pairwise_count()` 함수는 그룹 단위 내에서 단어가 동시에 출현한 횟수를 세어주는 함수. 보통 문장 단위를 그룹으로 처리
-
+.pull-left[
+```{r eval=F}
+# install.packages("widyr",dependencies = T)
+library(widyr)
+library(KoNLP)
+tar %>% 
+  unnest_tokens(sent, content, 
+                token = "sentences") %>% 
+  mutate(id = as.numeric(1:n())) %>% 
+  unnest_tokens(pos, sent, 
+                token = SimplePos09) %>% 
+  select(id, pos) %>% 
+  filter(str_detect(pos, "/n|/v(v|a)")) %>% 
+  mutate(pos = 
+           str_remove_all(pos, "/.*$")) %>% 
+  filter(nchar(pos) > 1)%>% 
+  pairwise_count(pos, id, 
+                 sort = T, upper = F) -> 
+  pw
+```
+]
+.pull-right[
 ```{r echo=F}
 # install.packages("widyr" ,dependencies = T)
 library(widyr)
@@ -766,7 +787,7 @@ pw_tar %>%
   pw
 pw
 ```
-
+]
 ---
 
 ### 패키지 설치 및 함수 사용법

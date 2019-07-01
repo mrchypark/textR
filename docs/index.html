@@ -1067,7 +1067,29 @@ tar
 ### 동시 출현 빈도 계산
 
 `pairwise_count()` 함수는 그룹 단위 내에서 단어가 동시에 출현한 횟수를 세어주는 함수. 보통 문장 단위를 그룹으로 처리
+.pull-left[
 
+```r
+# install.packages("widyr",dependencies = T)
+library(widyr)
+library(KoNLP)
+tar %&gt;% 
+  unnest_tokens(sent, content, 
+                token = "sentences") %&gt;% 
+  mutate(id = as.numeric(1:n())) %&gt;% 
+  unnest_tokens(pos, sent, 
+                token = SimplePos09) %&gt;% 
+  select(id, pos) %&gt;% 
+  filter(str_detect(pos, "/n|/v(v|a)")) %&gt;% 
+  mutate(pos = 
+           str_remove_all(pos, "/.*$")) %&gt;% 
+  filter(nchar(pos) &gt; 1)%&gt;% 
+  pairwise_count(pos, id, 
+                 sort = T, upper = F) -&gt; 
+  pw
+```
+]
+.pull-right[
 
 ```
 ## # A tibble: 15,967 x 3
@@ -1085,7 +1107,7 @@ tar
 ## 10 우리   정부      10
 ## # ... with 15,957 more rows
 ```
-
+]
 ---
 
 ### 패키지 설치 및 함수 사용법
@@ -1151,7 +1173,7 @@ pw %&gt;%
 ## Selecting by n
 ```
 
-![](index_files/figure-html/unnamed-chunk-38-1.png)&lt;!-- --&gt;
+![](index_files/figure-html/unnamed-chunk-39-1.png)&lt;!-- --&gt;
 
 ---
 
@@ -1227,9 +1249,9 @@ pw_graph
 ```
 
 ```
-## IGRAPH 9f5732c DN-- 34 35 -- 
+## IGRAPH 3c6244c DN-- 34 35 -- 
 ## + attr: name (v/c), n (e/n)
-## + edges from 9f5732c (vertex names):
+## + edges from 3c6244c (vertex names):
 ##  [1] 국민          -&gt;여러분   국민          -&gt;사랑    
 ##  [3] 여러분        -&gt;사랑     국민          -&gt;우리    
 ##  [5] 생각          -&gt;우리     우리          -&gt;세계    
@@ -1264,7 +1286,7 @@ ggraph(pw_graph) +
 ## Using `nicely` as default layout
 ```
 
-![](index_files/figure-html/unnamed-chunk-41-1.png)&lt;!-- --&gt;
+![](index_files/figure-html/unnamed-chunk-42-1.png)&lt;!-- --&gt;
 
 ---
 
