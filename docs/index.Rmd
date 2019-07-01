@@ -868,6 +868,32 @@ tar
 
 ---
 
+## 예시 답안
+
+```{r eval=F}
+tar %>% 
+  mutate(speech_id = 1:nrow(.)) %>% 
+  unnest_tokens(senten, content, 
+                token="sentences") %>% 
+  select(speech_id, senten) %>% 
+  mutate(sentence_id = 1:nrow(.)) %>% 
+  unnest_tokens(morph, senten,
+                token = pos) %>% 
+  filter(str_detect(morph, "/n|/v(v|a)")) %>% 
+  mutate(
+    morph = if_else(
+      str_detect(morph, "/n"),
+      str_replace_all(morph, "/.*$", ""),
+      str_replace_all(morph, "/.*$", "다")
+    )
+  ) %>% 
+  filter(str_length(morph) > 1) %>% 
+  pairwise_count(morph, sentence_id, sort=T, upper=F) %>% 
+  filter(item1 == "사랑")
+```
+
+---
+
 ### 사용예 : 네트워크 시각화
 
 ```{r message=F}

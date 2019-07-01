@@ -1236,6 +1236,33 @@ tar
 
 ---
 
+## 예시 답안
+
+
+```r
+tar %&gt;% 
+  mutate(speech_id = 1:nrow(.)) %&gt;% 
+  unnest_tokens(senten, content, 
+                token="sentences") %&gt;% 
+  select(speech_id, senten) %&gt;% 
+  mutate(sentence_id = 1:nrow(.)) %&gt;% 
+  unnest_tokens(morph, senten,
+                token = pos) %&gt;% 
+  filter(str_detect(morph, "/n|/v(v|a)")) %&gt;% 
+  mutate(
+    morph = if_else(
+      str_detect(morph, "/n"),
+      str_replace_all(morph, "/.*$", ""),
+      str_replace_all(morph, "/.*$", "다")
+    )
+  ) %&gt;% 
+  filter(str_length(morph) &gt; 1) %&gt;% 
+  pairwise_count(morph, sentence_id, sort=T, upper=F) %&gt;% 
+  filter(item1 == "사랑")
+```
+
+---
+
 ### 사용예 : 네트워크 시각화
 
 
@@ -1249,9 +1276,9 @@ pw_graph
 ```
 
 ```
-## IGRAPH 3c6244c DN-- 34 35 -- 
+## IGRAPH 2063ffb DN-- 34 35 -- 
 ## + attr: name (v/c), n (e/n)
-## + edges from 3c6244c (vertex names):
+## + edges from 2063ffb (vertex names):
 ##  [1] 국민          -&gt;여러분   국민          -&gt;사랑    
 ##  [3] 여러분        -&gt;사랑     국민          -&gt;우리    
 ##  [5] 생각          -&gt;우리     우리          -&gt;세계    
@@ -1286,7 +1313,7 @@ ggraph(pw_graph) +
 ## Using `nicely` as default layout
 ```
 
-![](index_files/figure-html/unnamed-chunk-42-1.png)&lt;!-- --&gt;
+![](index_files/figure-html/unnamed-chunk-43-1.png)&lt;!-- --&gt;
 
 ---
 
